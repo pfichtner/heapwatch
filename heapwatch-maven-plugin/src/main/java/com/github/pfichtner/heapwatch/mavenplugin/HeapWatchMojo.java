@@ -1,10 +1,10 @@
 package com.github.pfichtner.heapwatch.mavenplugin;
 
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
+import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.stream.Collectors.joining;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATION_TEST;
-import static org.eclipselabs.garbagecat.util.Memory.fromOptionSize;
 
 import java.io.File;
 import java.util.EnumSet;
@@ -17,11 +17,11 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.eclipselabs.garbagecat.util.Memory;
 
 import com.github.pfichtner.heapwatch.library.Comparison;
 import com.github.pfichtner.heapwatch.library.Validator;
 import com.github.pfichtner.heapwatch.library.Validator.ValidationResult;
+import com.github.pfichtner.heapwatch.library.acl.Memory;
 
 @Mojo(name = HeapWatchMojo.GOAL, defaultPhase = POST_INTEGRATION_TEST)
 public class HeapWatchMojo extends AbstractMojo {
@@ -66,7 +66,7 @@ public class HeapWatchMojo extends AbstractMojo {
 	}
 
 	private static Memory toMemory(String value) {
-		return fromOptionSize(value);
+		return memory(value);
 	}
 
 	private static Comparison toComparison(String name) {

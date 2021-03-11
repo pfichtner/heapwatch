@@ -1,5 +1,6 @@
 package com.github.pfichtner.heapwatch.library;
 
+import static com.github.pfichtner.heapwatch.library.acl.Memory.adapt;
 import static org.eclipselabs.garbagecat.util.Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
 
 import java.io.File;
@@ -24,7 +25,7 @@ public final class StatsReader {
 
 	private static Stats map(JvmRun jvmRun) {
 		Stats result = new Stats();
-		result.setMaxHeapSpace(jvmRun.getMaxHeapSpace());
+		result.setMaxHeapSpace(adapt(jvmRun.getMaxHeapSpace()));
 		return result;
 	}
 

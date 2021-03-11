@@ -1,9 +1,9 @@
 package com.github.pfichtner.heapwatch.library;
 
 import static com.github.pfichtner.heapwatch.library.Comparison.LE;
+import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.eclipselabs.garbagecat.util.Memory.memory;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -13,13 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import org.eclipselabs.garbagecat.util.Memory;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
-import com.github.pfichtner.heapwatch.library.Comparison;
-import com.github.pfichtner.heapwatch.library.Validator;
 import com.github.pfichtner.heapwatch.library.Validator.ValidationResult;
+import com.github.pfichtner.heapwatch.library.acl.Memory;
 import com.github.pfichtner.heapwatch.library.acl.Stats;
 
 public class ValidatorTest {
@@ -91,7 +89,6 @@ public class ValidatorTest {
 				validator.addValidation(function, parameter.matcher(), parameter.name);
 			}
 		}
-
 	}
 
 	private void givenAnalyseHasHeapSpaceUsed(String memory) {

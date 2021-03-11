@@ -1,7 +1,6 @@
 package com.github.pfichtner.heapwatch.library.acl;
-import java.util.function.Function;
 
-import org.eclipselabs.garbagecat.util.Memory;
+import java.util.function.Function;
 
 public class Stats {
 

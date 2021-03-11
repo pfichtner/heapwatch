@@ -1,7 +1,7 @@
 package com.github.pfichtner.heapwatch.library;
 
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
-import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
+import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -15,7 +15,7 @@ class StatsReaderTest {
 
 	@Test
 	void canParseGcLog() throws URISyntaxException {
-		assertThat(stats(file("gc.log")).getMaxHeapSpace(), is(kilobytes(914432)));
+		assertThat(stats(file("gc.log")).getMaxHeapSpace(), is(memory("914432K")));
 	}
 
 	private static File file(String name) throws URISyntaxException {
