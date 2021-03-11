@@ -9,7 +9,7 @@
 
 	<modules>
 		<module>library</module>
-		<module>hello-maven-plugin</module>
+		<module>heapwatcher-maven-plugin</module>
 	</modules>
 
 </project>
