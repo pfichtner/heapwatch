@@ -1,4 +1,4 @@
-package foo;
+package com.github.pfichtner.heapwatcher.library;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.equalTo;

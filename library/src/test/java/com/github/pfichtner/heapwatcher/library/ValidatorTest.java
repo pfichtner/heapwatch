@@ -1,6 +1,6 @@
-package foo;
+package com.github.pfichtner.heapwatcher.library;
 
-import static foo.Comparison.LE;
+import static com.github.pfichtner.heapwatcher.library.Comparison.LE;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.eclipselabs.garbagecat.util.Memory.memory;
@@ -17,8 +17,10 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
-import foo.Validator.ValidationResult;
-import foo.acl.Stats;
+import com.github.pfichtner.heapwatcher.library.Comparison;
+import com.github.pfichtner.heapwatcher.library.Validator;
+import com.github.pfichtner.heapwatcher.library.Validator.ValidationResult;
+import com.github.pfichtner.heapwatcher.library.acl.Stats;
 
 public class ValidatorTest {
 

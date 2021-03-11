@@ -1,4 +1,4 @@
-package foo.acl;
+package com.github.pfichtner.heapwatcher.library.acl;
 import java.util.function.Function;
 
 import org.eclipselabs.garbagecat.util.Memory;

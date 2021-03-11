@@ -1,6 +1,6 @@
-package foo;
+package com.github.pfichtner.heapwatcher.library;
 
-import static foo.StatsReader.stats;
+import static com.github.pfichtner.heapwatcher.library.StatsReader.stats;
 import static org.eclipselabs.garbagecat.util.Memory.kilobytes;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

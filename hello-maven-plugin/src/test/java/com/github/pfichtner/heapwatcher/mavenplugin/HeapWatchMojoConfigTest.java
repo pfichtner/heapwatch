@@ -1,7 +1,7 @@
-package sample.plugin;
+package com.github.pfichtner.heapwatcher.mavenplugin;
 
+import static com.github.pfichtner.heapwatcher.mavenplugin.TestUtil.lowerThan;
 import static org.assertj.core.api.Assertions.assertThat;
-import static sample.plugin.TestUtil.lowerThan;
 
 import java.io.File;
 
@@ -9,6 +9,8 @@ import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.resources.TestResources;
 import org.junit.Rule;
 import org.junit.Test;
+
+import com.github.pfichtner.heapwatcher.mavenplugin.HeapWatchMojo;
 
 public class HeapWatchMojoConfigTest {
 

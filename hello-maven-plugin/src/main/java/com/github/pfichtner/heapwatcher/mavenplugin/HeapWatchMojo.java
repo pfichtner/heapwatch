@@ -1,7 +1,7 @@
-package sample.plugin;
+package com.github.pfichtner.heapwatcher.mavenplugin;
 
-import static foo.StatsReader.stats;
-import static foo.acl.Stats.functionForAttribute;
+import static com.github.pfichtner.heapwatcher.library.StatsReader.stats;
+import static com.github.pfichtner.heapwatcher.library.acl.Stats.functionForAttribute;
 import static java.util.stream.Collectors.joining;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATION_TEST;
 import static org.eclipselabs.garbagecat.util.Memory.fromOptionSize;
@@ -19,9 +19,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.eclipselabs.garbagecat.util.Memory;
 
-import foo.Comparison;
-import foo.Validator;
-import foo.Validator.ValidationResult;
+import com.github.pfichtner.heapwatcher.library.Comparison;
+import com.github.pfichtner.heapwatcher.library.Validator;
+import com.github.pfichtner.heapwatcher.library.Validator.ValidationResult;
 
 @Mojo(name = HeapWatchMojo.GOAL, defaultPhase = POST_INTEGRATION_TEST)
 public class HeapWatchMojo extends AbstractMojo {

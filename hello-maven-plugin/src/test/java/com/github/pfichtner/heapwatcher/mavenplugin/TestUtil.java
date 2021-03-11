@@ -1,7 +1,7 @@
-package sample.plugin;
+package com.github.pfichtner.heapwatcher.mavenplugin;
 
-import static foo.Comparison.GT;
-import static foo.Comparison.LT;
+import static com.github.pfichtner.heapwatcher.library.Comparison.GT;
+import static com.github.pfichtner.heapwatcher.library.Comparison.LT;
 import static java.lang.System.currentTimeMillis;
 import static org.assertj.core.api.Assertions.entry;
 
@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import org.assertj.core.data.MapEntry;
 
-import foo.Comparison;
+import com.github.pfichtner.heapwatcher.library.Comparison;
 
 public final class TestUtil {
 

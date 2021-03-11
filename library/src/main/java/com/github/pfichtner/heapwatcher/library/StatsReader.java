@@ -1,4 +1,4 @@
-package foo;
+package com.github.pfichtner.heapwatcher.library;
 
 import static org.eclipselabs.garbagecat.util.Constants.DEFAULT_BOTTLENECK_THROUGHPUT_THRESHOLD;
 
@@ -8,7 +8,7 @@ import org.eclipselabs.garbagecat.domain.JvmRun;
 import org.eclipselabs.garbagecat.service.GcManager;
 import org.eclipselabs.garbagecat.util.jdk.Jvm;
 
-import foo.acl.Stats;
+import com.github.pfichtner.heapwatcher.library.acl.Stats;
 
 public final class StatsReader {
 

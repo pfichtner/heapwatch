@@ -1,13 +1,13 @@
-package sample.plugin;
+package com.github.pfichtner.heapwatcher.mavenplugin;
 
-import static foo.StatsReader.stats;
+import static com.github.pfichtner.heapwatcher.library.StatsReader.stats;
+import static com.github.pfichtner.heapwatcher.mavenplugin.TestUtil.greaterThan;
+import static com.github.pfichtner.heapwatcher.mavenplugin.TestUtil.lowerThan;
+import static com.github.pfichtner.heapwatcher.mavenplugin.TestUtil.touch;
 import static java.lang.String.valueOf;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static sample.plugin.TestUtil.greaterThan;
-import static sample.plugin.TestUtil.lowerThan;
-import static sample.plugin.TestUtil.touch;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import org.assertj.core.data.MapEntry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.github.pfichtner.heapwatcher.mavenplugin.HeapWatchMojo;
 
 public class HeapWatchMojoTest {
 

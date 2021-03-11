@@ -1,4 +1,4 @@
-package foo;
+package com.github.pfichtner.heapwatcher.library;
 
 import static java.util.stream.Collectors.toList;
 
@@ -11,7 +11,7 @@ import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.hamcrest.TypeSafeMatcher;
 
-import foo.acl.Stats;
+import com.github.pfichtner.heapwatcher.library.acl.Stats;
 
 public class Validator {
 
