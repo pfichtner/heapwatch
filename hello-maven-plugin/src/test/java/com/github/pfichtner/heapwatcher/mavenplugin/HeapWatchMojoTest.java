@@ -21,8 +21,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.github.pfichtner.heapwatcher.mavenplugin.HeapWatchMojo;
-
 public class HeapWatchMojoTest {
 
 	@Rule

@@ -10,8 +10,6 @@ import org.apache.maven.plugin.testing.resources.TestResources;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.github.pfichtner.heapwatcher.mavenplugin.HeapWatchMojo;
-
 public class HeapWatchMojoConfigTest {
 
 	@Rule

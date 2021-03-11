@@ -17,8 +17,6 @@ import org.eclipselabs.garbagecat.util.Memory;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
-import com.github.pfichtner.heapwatcher.library.Comparison;
-import com.github.pfichtner.heapwatcher.library.Validator;
 import com.github.pfichtner.heapwatcher.library.Validator.ValidationResult;
 import com.github.pfichtner.heapwatcher.library.acl.Stats;
 
