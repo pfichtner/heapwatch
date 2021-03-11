@@ -10,7 +10,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>hello-maven-plugin</artifactId>
+	<artifactId>heapwatcher-maven-plugin</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
