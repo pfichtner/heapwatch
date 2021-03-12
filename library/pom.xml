@@ -8,8 +8,14 @@
 		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-
 	<artifactId>library</artifactId>
+
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -18,9 +24,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>garbagecat</groupId>
+			<groupId>com.github.mgm3746</groupId>
 			<artifactId>garbagecat</artifactId>
-			<version>3.0.6-SNAPSHOT</version>
+			<version>2c17b1baf3</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-cli</groupId>
