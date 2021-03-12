@@ -10,6 +10,7 @@
 	<modules>
 		<module>library</module>
 		<module>heapwatch-maven-plugin</module>
+		<module>heapwatch-maven-plugin-assembly</module>
 	</modules>
 
 </project>
