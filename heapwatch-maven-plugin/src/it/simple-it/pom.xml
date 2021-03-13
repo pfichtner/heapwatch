@@ -21,7 +21,7 @@
         <version>@project.version@</version>
 	<configuration>
 		<gclog>gc.log</gclog>
-		<heapSpace><lt>42M</lt></heapSpace>
+		<heapSpace><lt>1G</lt></heapSpace>
 	</configuration>
         <executions>
           <execution>
