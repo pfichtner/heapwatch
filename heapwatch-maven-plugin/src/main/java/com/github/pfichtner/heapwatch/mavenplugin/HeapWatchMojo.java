@@ -31,8 +31,18 @@ public class HeapWatchMojo extends AbstractMojo {
 	@Parameter(name = "gclog", required = true)
 	public File gclog;
 
+	@Parameter(name = "heapOccupancy")
+	public Map<String, String> heapOccupancy;
+	@Parameter(name = "heapAfterGC")
+	public Map<String, String> heapAfterGC;
 	@Parameter(name = "heapSpace")
 	public Map<String, String> heapSpace;
+	@Parameter(name = "metaspaceOccupancy")
+	public Map<String, String> metaspaceOccupancy;
+	@Parameter(name = "metaspaceAfterGC")
+	public Map<String, String> metaspaceAfterGC;
+	@Parameter(name = "metaspaceSpace")
+	public Map<String, String> metaspaceSpace;
 
 	public void execute() throws MojoExecutionException {
 		if (this.gclog == null) {
@@ -41,13 +51,28 @@ public class HeapWatchMojo extends AbstractMojo {
 		if (!this.gclog.exists()) {
 			throw new IllegalStateException(gclog + " does not exist");
 		}
-		if (heapSpace == null || heapSpace.isEmpty()) {
+
+		if (nullOrEmpty(heapOccupancy) && //
+				nullOrEmpty(heapAfterGC) && //
+				nullOrEmpty(heapSpace) && //
+				nullOrEmpty(metaspaceOccupancy) && //
+				nullOrEmpty(metaspaceAfterGC) && //
+				nullOrEmpty(metaspaceSpace)) {
 			throw new IllegalStateException("no validation configured");
 		}
 
 		Validator validator = new Validator();
+		heapOccupancy.entrySet().forEach(entry -> addValidation(validator, "heapOccupancy", entry));
+		heapAfterGC.entrySet().forEach(entry -> addValidation(validator, "heapAfterGC", entry));
 		heapSpace.entrySet().forEach(entry -> addValidation(validator, "heapSpace", entry));
+		metaspaceOccupancy.entrySet().forEach(entry -> addValidation(validator, "metaspaceOccupancy", entry));
+		metaspaceAfterGC.entrySet().forEach(entry -> addValidation(validator, "metaspaceAfterGC", entry));
+		metaspaceSpace.entrySet().forEach(entry -> addValidation(validator, "metaspaceSpace", entry));
 		validate(validator);
+	}
+
+	private static boolean nullOrEmpty(Map<String, String> map) {
+		return map == null || map.isEmpty();
 	}
 
 	private static void addValidation(Validator validator, String name, Entry<String, String> entry) {

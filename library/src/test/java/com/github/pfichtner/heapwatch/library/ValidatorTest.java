@@ -92,7 +92,7 @@ public class ValidatorTest {
 	}
 
 	private void givenAnalyseHasHeapSpaceUsed(String memory) {
-		stats.setMaxHeapSpace(memory(memory));
+		stats.maxHeapSpace = memory(memory);
 	}
 
 	public void givenAlwaysFalseValidationWithMessage(String[] messages) {

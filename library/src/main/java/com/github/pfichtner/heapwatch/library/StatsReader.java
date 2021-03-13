@@ -25,7 +25,12 @@ public final class StatsReader {
 
 	private static Stats map(JvmRun jvmRun) {
 		Stats result = new Stats();
-		result.setMaxHeapSpace(adapt(jvmRun.getMaxHeapSpace()));
+		result.maxHeapAfterGC = adapt(jvmRun.getMaxHeapAfterGc());
+		result.maxHeapOccupancy = adapt(jvmRun.getMaxHeapOccupancy());
+		result.maxHeapSpace = adapt(jvmRun.getMaxHeapSpace());
+		result.maxMetaspaceAfterGC = adapt(jvmRun.getMaxPermAfterGc());
+		result.maxMetaspaceOccupancy = adapt(jvmRun.getMaxPermOccupancy());
+		result.maxMetaspaceSpace = adapt(jvmRun.getMaxPermSpace());
 		return result;
 	}
 
