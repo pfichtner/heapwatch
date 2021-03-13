@@ -24,9 +24,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.github.mgm3746</groupId>
+			<groupId>com.github.pfichtner</groupId>
 			<artifactId>garbagecat</artifactId>
-			<version>2c17b1baf3</version>
+			<version>nohsqldb-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-cli</groupId>
