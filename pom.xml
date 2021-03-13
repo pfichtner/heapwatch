@@ -11,6 +11,7 @@
 		<module>library</module>
 		<module>heapwatch-maven-plugin</module>
 		<module>heapwatch-maven-plugin-assembly</module>
+		<module>heapwatch-maven-plugin-shade</module>
 	</modules>
 
 </project>
