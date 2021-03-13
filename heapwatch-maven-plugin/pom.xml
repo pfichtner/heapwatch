@@ -15,8 +15,7 @@
 
 	<name>heapwatch-maven-plugin Maven Plugin</name>
 
-	<!-- FIXME change it to the project's website -->
-	<url>http://www.example.com</url>
+	<url>https://github.com/pfichtner/heapwatch/</url>
 
 	<prerequisites>
 		<maven>${maven.version}</maven>
