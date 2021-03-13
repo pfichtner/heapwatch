@@ -75,4 +75,8 @@ public class Validator {
 		return description.toString();
 	}
 
+	public int getValidations() {
+		return validations.size();
+	}
+
 }

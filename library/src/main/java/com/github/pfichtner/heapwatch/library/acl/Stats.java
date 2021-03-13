@@ -37,17 +37,17 @@ public class Stats {
 
 	public static Function<Stats, Memory> functionForAttribute(String name) {
 		switch (name) {
-		case "maxHeapOccupancy":
+		case "heapOccupancy":
 			return Stats::getMaxHeapOccupancy;
-		case "maxHeapAfterGC":
+		case "heapAfterGC":
 			return Stats::getMaxHeapAfterGC;
-		case "maxHeapSpace":
+		case "heapSpace":
 			return Stats::getMaxHeapSpace;
-		case "maxMetaspaceOccupancy":
+		case "metaspaceOccupancy":
 			return Stats::getMaxMetaspaceOccupancy;
-		case "maxMetaspaceAfterGC":
+		case "metaspaceAfterGC":
 			return Stats::getMaxMetaspaceAfterGC;
-		case "maxMetaspaceSpace":
+		case "metaspaceSpace":
 			return Stats::getMaxMetaspaceSpace;
 		}
 		return null;

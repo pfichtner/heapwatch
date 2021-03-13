@@ -7,6 +7,7 @@ import static java.util.stream.Collectors.joining;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATION_TEST;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
@@ -52,27 +53,23 @@ public class HeapWatchMojo extends AbstractMojo {
 			throw new IllegalStateException(gclog + " does not exist");
 		}
 
-		if (nullOrEmpty(heapOccupancy) && //
-				nullOrEmpty(heapAfterGC) && //
-				nullOrEmpty(heapSpace) && //
-				nullOrEmpty(metaspaceOccupancy) && //
-				nullOrEmpty(metaspaceAfterGC) && //
-				nullOrEmpty(metaspaceSpace)) {
+		Validator validator = new Validator();
+		nullSafe(heapOccupancy).entrySet().forEach(entry -> addValidation(validator, "heapOccupancy", entry));
+		nullSafe(heapAfterGC).entrySet().forEach(entry -> addValidation(validator, "heapAfterGC", entry));
+		nullSafe(heapSpace).entrySet().forEach(entry -> addValidation(validator, "heapSpace", entry));
+		nullSafe(metaspaceOccupancy).entrySet().forEach(entry -> addValidation(validator, "metaspaceOccupancy", entry));
+		nullSafe(metaspaceAfterGC).entrySet().forEach(entry -> addValidation(validator, "metaspaceAfterGC", entry));
+		nullSafe(metaspaceSpace).entrySet().forEach(entry -> addValidation(validator, "metaspaceSpace", entry));
+
+		if (validator.getValidations() == 0) {
 			throw new IllegalStateException("no validation configured");
 		}
 
-		Validator validator = new Validator();
-		heapOccupancy.entrySet().forEach(entry -> addValidation(validator, "heapOccupancy", entry));
-		heapAfterGC.entrySet().forEach(entry -> addValidation(validator, "heapAfterGC", entry));
-		heapSpace.entrySet().forEach(entry -> addValidation(validator, "heapSpace", entry));
-		metaspaceOccupancy.entrySet().forEach(entry -> addValidation(validator, "metaspaceOccupancy", entry));
-		metaspaceAfterGC.entrySet().forEach(entry -> addValidation(validator, "metaspaceAfterGC", entry));
-		metaspaceSpace.entrySet().forEach(entry -> addValidation(validator, "metaspaceSpace", entry));
 		validate(validator);
 	}
 
-	private static boolean nullOrEmpty(Map<String, String> map) {
-		return map == null || map.isEmpty();
+	private static <K, V> Map<K, V> nullSafe(Map<K, V> map) {
+		return map == null ? Collections.emptyMap() : map;
 	}
 
 	private static void addValidation(Validator validator, String name, Entry<String, String> entry) {
