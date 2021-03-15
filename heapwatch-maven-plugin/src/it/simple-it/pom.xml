@@ -19,16 +19,16 @@
         <groupId>@project.groupId@</groupId>
         <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
-	<configuration>
-		<gclog>gc.log</gclog>
-		<heapSpace><lt>1G</lt></heapSpace>
-	</configuration>
+		<configuration>
+			<gclog>gc.log</gclog>
+			<heapSpace><lt>1G</lt></heapSpace>
+		</configuration>
         <executions>
           <execution>
             <id>touch</id>
             <phase>validate</phase>
             <goals>
-              <goal>touch</goal>
+              <goal>verify</goal>
             </goals>
           </execution>
         </executions>

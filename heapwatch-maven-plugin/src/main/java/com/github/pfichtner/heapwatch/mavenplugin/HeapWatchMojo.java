@@ -27,7 +27,7 @@ import com.github.pfichtner.heapwatch.library.acl.Memory;
 @Mojo(name = HeapWatchMojo.GOAL, defaultPhase = POST_INTEGRATION_TEST)
 public class HeapWatchMojo extends AbstractMojo {
 
-	public static final String GOAL = "touch";
+	public static final String GOAL = "verify";
 
 	@Parameter(name = "gclog", required = true)
 	public File gclog;
