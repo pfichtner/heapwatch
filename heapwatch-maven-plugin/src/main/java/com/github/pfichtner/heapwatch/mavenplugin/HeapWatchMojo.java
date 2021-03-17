@@ -45,6 +45,9 @@ public class HeapWatchMojo extends AbstractMojo {
 	@Parameter(name = "metaspaceSpace")
 	public Map<String, String> metaspaceSpace;
 
+	@Parameter(name = "breakBuildOnValidationError")
+	public boolean breakBuildOnValidationError = true;
+
 	public void execute() throws MojoExecutionException {
 		if (this.gclog == null) {
 			throw new NullPointerException("gclog");
@@ -83,7 +86,11 @@ public class HeapWatchMojo extends AbstractMojo {
 	private void validate(Validator validator) {
 		List<ValidationResult> validationResults = validator.validate(stats(gclog));
 		if (!validationResults.isEmpty()) {
-			throw new RuntimeException(validationResults.stream().map(r -> r.getErrorMessage()).collect(joining(", ")));
+			String error = validationResults.stream().map(r -> r.getErrorMessage()).collect(joining(", "));
+			getLog().error(error);
+			if (breakBuildOnValidationError) {
+				throw new RuntimeException(error);
+			}
 		}
 	}
 
