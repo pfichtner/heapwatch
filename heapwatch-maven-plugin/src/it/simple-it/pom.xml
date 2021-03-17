@@ -25,7 +25,6 @@
 		</configuration>
         <executions>
           <execution>
-            <id>touch</id>
             <phase>validate</phase>
             <goals>
               <goal>verify</goal>
