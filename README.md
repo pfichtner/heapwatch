@@ -44,4 +44,5 @@ Backlog:
 - Support more meassurements (currently supported: heapOccupancy, heapAfterGC, heapSpace, metaspaceOccupancy, metaspaceAfterGC, metaspaceSpace) 
 
 This plugin uses the following FOSS software components: 
-- https://github.com/mgm3746/garbagecat (EPLv1.0)
+- garbagecat https://github.com/mgm3746/garbagecat (EPLv1.0)
+- JavaHamcrest http://hamcrest.org/JavaHamcrest/ (BSD-3-Clause)
