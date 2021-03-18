@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -87,14 +88,18 @@ public class HeapWatchMojo extends AbstractMojo {
 	private void validate(Validator validator) {
 		Log log = getLog();
 		List<ValidationResult> validationResults = validator.validate(stats(gclog));
-		oks(validationResults).stream().map(ValidationResult::getMessage).forEach(log::info);
+		messagesOf(oks(validationResults)).forEach(log::info);
 		List<ValidationResult> errors = errors(validationResults);
 		if (!errors.isEmpty()) {
-			errors.stream().map(ValidationResult::getMessage).forEach(log::error);
+			messagesOf(errors).forEach(log::error);
 			if (breakBuildOnValidationError) {
-				throw new RuntimeException(errors.stream().map(ValidationResult::getMessage).collect(joining(", ")));
+				throw new RuntimeException(messagesOf(errors).collect(joining(", ")));
 			}
 		}
+	}
+
+	private Stream<String> messagesOf(List<ValidationResult> results) {
+		return results.stream().map(ValidationResult::getMessage);
 	}
 
 	private static Memory toMemory(String value) {
