@@ -1,5 +1,6 @@
 package com.github.pfichtner.heapwatch.mavenplugin;
 
+import static com.github.pfichtner.heapwatch.library.Comparison.valueOfIgnoreCase;
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
@@ -19,7 +20,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import com.github.pfichtner.heapwatch.library.Comparison;
 import com.github.pfichtner.heapwatch.library.Validator;
 import com.github.pfichtner.heapwatch.library.Validator.ValidationResult;
 import com.github.pfichtner.heapwatch.library.acl.Memory;
@@ -78,7 +78,7 @@ public class HeapWatchMojo extends AbstractMojo {
 	private static void addValidation(Validator validator, String name, Entry<String, String> entry) {
 		validator.addValidation( //
 				functionForAttribute(name), //
-				toComparison(entry.getKey()).matcher(toMemory(entry.getValue())), //
+				valueOfIgnoreCase(entry.getKey()).matcher(toMemory(entry.getValue())), //
 				name //
 		);
 	}
@@ -96,15 +96,6 @@ public class HeapWatchMojo extends AbstractMojo {
 
 	private static Memory toMemory(String value) {
 		return memory(value);
-	}
-
-	private static Comparison toComparison(String name) {
-		return streamOf(Comparison.class).filter(e -> e.name().equalsIgnoreCase(name)).findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("Invalid comparison " + name));
-	}
-
-	private static <T extends Enum<T>> Stream<T> streamOf(Class<T> clazz) {
-		return EnumSet.allOf(clazz).stream();
 	}
 
 }
