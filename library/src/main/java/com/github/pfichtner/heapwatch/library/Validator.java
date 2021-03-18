@@ -1,10 +1,13 @@
 package com.github.pfichtner.heapwatch.library;
 
+import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.error;
+import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.ok;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -39,20 +42,87 @@ public class Validator {
 		}
 	}
 
-	public static class ValidationResult {
+	public abstract static class ValidationResult {
 
-		private final String errorMessage;
+		private static class ValidationSuccess extends ValidationResult {
 
-		private ValidationResult(String errorMessage) {
-			this.errorMessage = errorMessage;
+			private String message;
+
+			public ValidationSuccess(FunctionBasedMatcher<?> matcher, Stats stats) {
+				this.message = text(matcher, stats);
+			}
+
+			private static String text(FunctionBasedMatcher<?> matcher, Stats stats) {
+				return new StringDescription() //
+						.appendDescriptionOf(matcher) //
+						.appendText(" matched for value ") //
+						.appendValue(matcher.function.apply(stats)) //
+						.toString();
+			}
+
+			@Override
+			public boolean isError() {
+				return false;
+			}
+
+			@Override
+			public String getMessage() {
+				return this.message;
+			}
+
 		}
 
-		public String getErrorMessage() {
-			return errorMessage;
+		private static class ValidationError extends ValidationResult {
+
+			private final String errorMessage;
+
+			public ValidationError(FunctionBasedMatcher<?> matcher, Stats stats) {
+				this.errorMessage = text(matcher, stats);
+			}
+
+			private static String text(FunctionBasedMatcher<?> matcher, Stats stats) {
+				Description description = new StringDescription().appendText("Expected ").appendDescriptionOf(matcher)
+						.appendText(" but ");
+				matcher.matcher.describeMismatch(matcher.function.apply(stats), description);
+				return description.toString();
+			}
+
+			@Override
+			public boolean isError() {
+				return true;
+			}
+
+			@Override
+			public String getMessage() {
+				return this.errorMessage;
+			}
+
 		}
 
-		public static ValidationResult error(String errorMessage) {
-			return new ValidationResult(errorMessage);
+		public abstract boolean isError();
+
+		public abstract String getMessage();
+
+		public static ValidationResult ok(FunctionBasedMatcher<?> matcher, Stats stats) {
+			return new ValidationSuccess(matcher, stats);
+		}
+
+		public static ValidationResult error(FunctionBasedMatcher<?> matcher, Stats stats) {
+			return new ValidationError(matcher, stats);
+		}
+
+		public static List<ValidationResult> errors(List<ValidationResult> validations) {
+			return filter(validations, ValidationResult::isError);
+		}
+
+		public static List<ValidationResult> oks(List<ValidationResult> validations) {
+			return filter(validations, ((Predicate<? super ValidationResult>) ValidationResult::isError).negate());
+		}
+
+		@SuppressWarnings("hiding")
+		private static <ValidationResult> List<ValidationResult> filter(List<ValidationResult> validations,
+				Predicate<? super ValidationResult> p) {
+			return validations.stream().filter(p).collect(toList());
 		}
 
 	}
@@ -65,14 +135,7 @@ public class Validator {
 	}
 
 	public List<ValidationResult> validate(Stats stats) {
-		return validations.stream().filter(m -> !m.matches(stats)).map(m -> ValidationResult.error(text(m, stats)))
-				.collect(toList());
-	}
-
-	private String text(FunctionBasedMatcher<?> matcher, Stats stats) {
-		Description description = new StringDescription().appendText("Expected ").appendDescriptionOf(matcher).appendText(" but ");
-		matcher.matcher.describeMismatch(matcher.function.apply(stats), description);
-		return description.toString();
+		return validations.stream().map(m -> m.matches(stats) ? ok(m, stats) : error(m, stats)).collect(toList());
 	}
 
 	public int getValidations() {

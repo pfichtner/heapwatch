@@ -2,6 +2,8 @@ package com.github.pfichtner.heapwatch.mavenplugin;
 
 import static com.github.pfichtner.heapwatch.library.Comparison.valueOfIgnoreCase;
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
+import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.errors;
+import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.stream.Collectors.joining;
@@ -9,14 +11,13 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATI
 
 import java.io.File;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -84,12 +85,14 @@ public class HeapWatchMojo extends AbstractMojo {
 	}
 
 	private void validate(Validator validator) {
+		Log log = getLog();
 		List<ValidationResult> validationResults = validator.validate(stats(gclog));
-		if (!validationResults.isEmpty()) {
-			String error = validationResults.stream().map(r -> r.getErrorMessage()).collect(joining(", "));
-			getLog().error(error);
+		oks(validationResults).stream().map(ValidationResult::getMessage).forEach(log::info);
+		List<ValidationResult> errors = errors(validationResults);
+		if (!errors.isEmpty()) {
+			errors.stream().map(ValidationResult::getMessage).forEach(log::error);
 			if (breakBuildOnValidationError) {
-				throw new RuntimeException(error);
+				throw new RuntimeException(errors.stream().map(ValidationResult::getMessage).collect(joining(", ")));
 			}
 		}
 	}

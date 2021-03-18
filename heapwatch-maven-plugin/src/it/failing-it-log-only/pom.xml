@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>sample.plugin.it</groupId>
-  <artifactId>simple-it</artifactId>
+  <artifactId>failing-it-log</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <description>A simple IT verifying the basic use case.</description>
+  <description>A IT where the result is not ok gut does not break the build but log only.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

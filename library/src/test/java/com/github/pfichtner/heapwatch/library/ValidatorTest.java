@@ -1,6 +1,8 @@
 package com.github.pfichtner.heapwatch.library;
 
 import static com.github.pfichtner.heapwatch.library.Comparison.LE;
+import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.errors;
+import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -57,7 +59,7 @@ public class ValidatorTest {
 		givenAnalyseHasHeapSpaceUsed("33K");
 		whenCheckIsDone();
 		thenTheResultIs(NOT_OK);
-		withMessage("Expected \"" + name + "\", not a value greater than <32K> but was <33K>");
+		withErrorMessage("Expected \"" + name + "\", not a value greater than <32K> but was <33K>");
 	}
 
 	@Test
@@ -66,7 +68,8 @@ public class ValidatorTest {
 		givenAnalyseHasHeapSpaceUsed("32K");
 		whenCheckIsDone();
 		thenTheResultIs(OK);
-		withNoMessages();
+		withNoErrorMessages();
+		withOkMessage("\"heapSpace\", not a value greater than <32K> matched for value <32K>");
 	}
 
 	@Test
@@ -75,7 +78,7 @@ public class ValidatorTest {
 		givenAlwaysFalseValidationWithMessage(messages);
 		whenCheckIsDone();
 		thenTheResultIs(NOT_OK);
-		withMessages(e("A"), e("B"), e("C"));
+		withErrorMessages(e("A"), e("B"), e("C"));
 	}
 
 	private String e(String attribute) {
@@ -110,23 +113,31 @@ public class ValidatorTest {
 	}
 
 	private boolean isOk() {
-		return validations.isEmpty();
+		return errors(validations).isEmpty();
 	}
 
-	private void withNoMessages() {
-		withMessages();
+	private void withNoErrorMessages() {
+		withErrorMessages();
 	}
 
-	private void withMessage(String expected) {
-		withMessages(expected);
+	private void withErrorMessage(String expected) {
+		withErrorMessages(expected);
 	}
 
-	private void withMessages(String... expectedMessages) {
+	private void withErrorMessages(String... expectedMessages) {
 		assertThat(errorMessages(), is(asList(expectedMessages)));
 	}
 
-	public List<String> errorMessages() {
-		return validations.stream().map(ValidationResult::getErrorMessage).collect(toList());
+	private List<String> errorMessages() {
+		return messages(errors(validations));
+	}
+
+	private void withOkMessage(String... expectedMessages) {
+		assertThat(messages(oks(validations)), is(asList(expectedMessages)));
+	}
+
+	private List<String> messages(List<ValidationResult> results) {
+		return results.stream().map(ValidationResult::getMessage).collect(toList());
 	}
 
 }
