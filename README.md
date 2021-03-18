@@ -37,6 +37,12 @@ In order to abort the build (or to issue a warning in the build log) when a cert
 
 If the heapspace exceeds 800 MB, the build aborts.
 
+Backlog: 
+- Release the maven plugin to maven-central
+- Create gradle plugin with same functionality
+- Support relative values ("not more than 10% more than memory used last time")
+
+
 
 This plugin uses the following FOSS software components: 
-https://github.com/mgm3746/garbagecat (EPLv1.0)
+- https://github.com/mgm3746/garbagecat (EPLv1.0)
