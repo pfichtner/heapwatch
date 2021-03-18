@@ -119,10 +119,9 @@ public class Validator {
 			return filter(validations, ((Predicate<? super ValidationResult>) ValidationResult::isError).negate());
 		}
 
-		@SuppressWarnings("hiding")
-		private static <ValidationResult> List<ValidationResult> filter(List<ValidationResult> validations,
-				Predicate<? super ValidationResult> p) {
-			return validations.stream().filter(p).collect(toList());
+		private static List<ValidationResult> filter(List<ValidationResult> validations,
+				Predicate<? super ValidationResult> predicate) {
+			return validations.stream().filter(predicate).collect(toList());
 		}
 
 	}
