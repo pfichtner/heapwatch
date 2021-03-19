@@ -2,8 +2,8 @@ package com.github.pfichtner.heapwatch.mavenplugin;
 
 import static com.github.pfichtner.heapwatch.library.Comparison.valueOfIgnoreCase;
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
-import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.errors;
-import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.oks;
+import static com.github.pfichtner.heapwatch.library.ValidationResult.errors;
+import static com.github.pfichtner.heapwatch.library.ValidationResult.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.stream.Collectors.joining;
@@ -22,8 +22,8 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import com.github.pfichtner.heapwatch.library.ValidationResult;
 import com.github.pfichtner.heapwatch.library.Validator;
-import com.github.pfichtner.heapwatch.library.Validator.ValidationResult;
 import com.github.pfichtner.heapwatch.library.acl.Memory;
 
 @Mojo(name = HeapWatchMojo.GOAL, defaultPhase = POST_INTEGRATION_TEST)
