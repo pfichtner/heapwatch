@@ -14,7 +14,9 @@
 	<modules>
 		<module>library</module>
 		<module>heapwatch-maven-plugin</module>
+<!--
 		<module>heapwatch-maven-plugin-assembly</module>
+-->
 		<module>heapwatch-maven-plugin-shade</module>
 	</modules>
 
@@ -32,6 +34,13 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
