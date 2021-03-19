@@ -39,6 +39,6 @@ jobs:
           java-version: 8
 
       - name: Publish SNAPSHOT version to GitHub Packages (we can skip tests since we only deploy if the build workflow succeeded)
-        run: mvn -B --no-transfer-progress -DskipTests deploy ---projects :heapwatch-maven-plugin-shade
+        run: mvn -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
