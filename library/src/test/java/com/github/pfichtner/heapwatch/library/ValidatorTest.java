@@ -91,23 +91,22 @@ public class ValidatorTest {
 
 	@Test
 	void allAttributes() {
-		String _32k = "32K";
-		String _64k = "64K";
+		String anyMemSize = "32K";
 		givenValidations( //
-				new Parameter(HEAP_AFTER_GC, LT, _32k), //
-				new Parameter(HEAP_OCCUPANCY, LT, _32k), //
-				new Parameter(HEAP_SPACE, LT, _32k), //
-				new Parameter(METASPACE_AFTER_GC, LT, _32k), //
-				new Parameter(METASPACE_OCCUPANCY, LT, _32k), //
-				new Parameter(METASPACE_SPACE, LT, _32k) //
+				new Parameter(HEAP_AFTER_GC, LT, anyMemSize), //
+				new Parameter(HEAP_OCCUPANCY, LT, anyMemSize), //
+				new Parameter(HEAP_SPACE, LT, anyMemSize), //
+				new Parameter(METASPACE_AFTER_GC, LT, anyMemSize), //
+				new Parameter(METASPACE_OCCUPANCY, LT, anyMemSize), //
+				new Parameter(METASPACE_SPACE, LT, anyMemSize) //
 		);
 
-		stats.maxHeapAfterGC = memory(_64k);
-		stats.maxHeapOccupancy = memory(_64k);
-		stats.maxHeapSpace = memory(_64k);
-		stats.maxMetaspaceAfterGC = memory(_64k);
-		stats.maxMetaspaceOccupancy = memory(_64k);
-		stats.maxMetaspaceSpace = memory(_64k);
+		stats.maxHeapAfterGC = memory(anyMemSize);
+		stats.maxHeapOccupancy = memory(anyMemSize);
+		stats.maxHeapSpace = memory(anyMemSize);
+		stats.maxMetaspaceAfterGC = memory(anyMemSize);
+		stats.maxMetaspaceOccupancy = memory(anyMemSize);
+		stats.maxMetaspaceSpace = memory(anyMemSize);
 		whenCheckIsDone();
 		thenTheResultIs(NOT_OK);
 		assertThat(validations.size(), is(validator.getValidations()));
