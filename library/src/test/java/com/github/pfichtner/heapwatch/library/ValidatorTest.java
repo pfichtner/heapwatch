@@ -1,9 +1,17 @@
 package com.github.pfichtner.heapwatch.library;
 
 import static com.github.pfichtner.heapwatch.library.Comparison.LE;
+import static com.github.pfichtner.heapwatch.library.Comparison.LT;
 import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.errors;
 import static com.github.pfichtner.heapwatch.library.Validator.ValidationResult.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
+import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_AFTER_GC;
+import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_OCCUPANCY;
+import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_SPACE;
+import static com.github.pfichtner.heapwatch.library.acl.Stats.METASPACE_AFTER_GC;
+import static com.github.pfichtner.heapwatch.library.acl.Stats.METASPACE_OCCUPANCY;
+import static com.github.pfichtner.heapwatch.library.acl.Stats.METASPACE_SPACE;
+import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
@@ -81,13 +89,41 @@ public class ValidatorTest {
 		withErrorMessages(e("A"), e("B"), e("C"));
 	}
 
+	@Test
+	void allAttributes() {
+		String _32k = "32K";
+		String _64k = "64K";
+		givenValidations( //
+				new Parameter(HEAP_AFTER_GC, LT, _32k), //
+				new Parameter(HEAP_OCCUPANCY, LT, _32k), //
+				new Parameter(HEAP_SPACE, LT, _32k), //
+				new Parameter(METASPACE_AFTER_GC, LT, _32k), //
+				new Parameter(METASPACE_OCCUPANCY, LT, _32k), //
+				new Parameter(METASPACE_SPACE, LT, _32k) //
+		);
+
+		stats.maxHeapAfterGC = memory(_64k);
+		stats.maxHeapOccupancy = memory(_64k);
+		stats.maxHeapSpace = memory(_64k);
+		stats.maxMetaspaceAfterGC = memory(_64k);
+		stats.maxMetaspaceOccupancy = memory(_64k);
+		stats.maxMetaspaceSpace = memory(_64k);
+		whenCheckIsDone();
+		thenTheResultIs(NOT_OK);
+		assertThat(validations.size(), is(validator.getValidations()));
+	}
+
 	private String e(String attribute) {
 		return "Expected \"" + attribute + "\", not ANYTHING but was null";
 	}
 
-	private void givenValidation(Parameter... parameters) {
+	private void givenValidation(Parameter parameter) {
+		givenValidations(parameter);
+	}
+
+	private void givenValidations(Parameter... parameters) {
 		for (Parameter parameter : parameters) {
-			Function<Stats, Memory> function = Stats.functionForAttribute(parameter.name);
+			Function<Stats, Memory> function = functionForAttribute(parameter.name);
 			if (function != null) {
 				validator.addValidation(function, parameter.matcher(), parameter.name);
 			}

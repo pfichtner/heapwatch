@@ -4,6 +4,13 @@ import java.util.function.Function;
 
 public class Stats {
 
+	public static final String HEAP_OCCUPANCY = "heapOccupancy";
+	public static final String HEAP_AFTER_GC = "heapAfterGC";
+	public static final String HEAP_SPACE = "heapSpace";
+	public static final String METASPACE_OCCUPANCY = "metaspaceOccupancy";
+	public static final String METASPACE_AFTER_GC = "metaspaceAfterGC";
+	public static final String METASPACE_SPACE = "metaspaceSpace";
+
 	public Memory maxHeapOccupancy;
 	public Memory maxHeapAfterGC;
 	public Memory maxHeapSpace;
@@ -37,17 +44,17 @@ public class Stats {
 
 	public static Function<Stats, Memory> functionForAttribute(String name) {
 		switch (name) {
-		case "heapOccupancy":
+		case HEAP_OCCUPANCY:
 			return Stats::getMaxHeapOccupancy;
-		case "heapAfterGC":
+		case HEAP_AFTER_GC:
 			return Stats::getMaxHeapAfterGC;
-		case "heapSpace":
+		case HEAP_SPACE:
 			return Stats::getMaxHeapSpace;
-		case "metaspaceOccupancy":
+		case METASPACE_OCCUPANCY:
 			return Stats::getMaxMetaspaceOccupancy;
-		case "metaspaceAfterGC":
+		case METASPACE_AFTER_GC:
 			return Stats::getMaxMetaspaceAfterGC;
-		case "metaspaceSpace":
+		case METASPACE_SPACE:
 			return Stats::getMaxMetaspaceSpace;
 		}
 		return null;
