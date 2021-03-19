@@ -1,5 +1,7 @@
 package com.github.pfichtner.heapwatch.library.acl;
 
+import static org.eclipselabs.garbagecat.util.Memory.Unit.BYTES;
+
 import java.util.Objects;
 
 public class Memory implements Comparable<Memory> {
@@ -20,7 +22,9 @@ public class Memory implements Comparable<Memory> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(delegate);
+		// delegate has no hashCode defined yet, so we do have to use a workaround
+		// return Objects.hashCode(delegate);
+		return (int) delegate.getValue(BYTES);
 	}
 
 	@Override
