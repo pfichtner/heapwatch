@@ -1,5 +1,7 @@
 [![Java CI with Maven](https://github.com/pfichtner/heapwatch/actions/workflows/maven.yml/badge.svg)](https://github.com/pfichtner/heapwatch/actions/workflows/maven.yml)
 [![Maven Package](https://github.com/pfichtner/heapwatch/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/pfichtner/heapwatch/actions/workflows/maven-publish.yml)
+[![BCH compliance](https://bettercodehub.com/edge/badge/pfichtner/heapwatch?branch=master)](https://bettercodehub.com/)
+[![Maintainability](https://api.codeclimate.com/v1/badges/9d65dad82c39b80a27e2/maintainability)](https://codeclimate.com/github/pfichtner/heapwatch/maintainability)
 # heapwatch
 Have you ever had the problem that your application functionally fulfilled all the requirements, but hours or days after deployment you noticed that your application suddenly allocated twice as much memory as before? A big problem is of course finding the cause in all the commits between the last and the current release. Wouldn't it be nice to be informed at the moment of the commit that your application is suddenly consuming significantly more memory than before?
 
