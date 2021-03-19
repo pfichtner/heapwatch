@@ -45,6 +45,7 @@ Backlog:
 - Create gradle plugin with same functionality
 - Support relative values ("not more than 10% more than memory used last time")
 - Support more meassurements (currently supported: heapOccupancy, heapAfterGC, heapSpace, metaspaceOccupancy, metaspaceAfterGC, metaspaceSpace) 
+- Investigate if we can attach the plugin analog to jacoco-maven-plugin (via prepare-agent goal)
 
 This plugin uses the following FOSS software components: 
 - garbagecat https://github.com/mgm3746/garbagecat (EPLv1.0)
