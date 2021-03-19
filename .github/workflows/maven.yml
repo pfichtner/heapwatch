@@ -24,7 +24,7 @@ jobs:
       with:
         java-version: ${{ matrix.java-version }}
     - name: Build with Maven
-      run: mvn -B package integration-test -P run-its --file pom.xml
+      run: ./mvnw -B package integration-test -P run-its --file pom.xml
 
   publish-snapshot:
     needs: build
@@ -39,6 +39,6 @@ jobs:
           java-version: 8
 
       - name: Publish SNAPSHOT version to GitHub Packages (we can skip tests since we only deploy if the build workflow succeeded)
-        run: mvn -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
+        run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
