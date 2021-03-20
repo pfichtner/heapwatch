@@ -1,11 +1,11 @@
 package com.github.pfichtner.heapwatch.library;
 
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -16,9 +16,8 @@ class ComparisonTest {
 
 	@Test
 	void valueOfIgnoreCase() {
-		for (Comparison comparison : Comparison.values()) {
-			assertSame(loadByName(comparison, String::toLowerCase), loadByName(comparison, String::toUpperCase));
-		}
+		asList(Comparison.values())
+				.forEach(c -> assertSame(loadByName(c, String::toLowerCase), loadByName(c, String::toUpperCase)));
 	}
 
 	@Test
@@ -40,7 +39,7 @@ class ComparisonTest {
 	}
 
 	private void verify(int value, int compTo, Boolean... expected) {
-		assertEquals(Arrays.asList(expected), matches(value, compTo));
+		assertEquals(asList(expected), matches(value, compTo));
 	}
 
 	private List<Boolean> matches(int value, int compTo) {
