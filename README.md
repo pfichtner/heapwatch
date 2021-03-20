@@ -3,6 +3,7 @@
 [![BCH compliance](https://bettercodehub.com/edge/badge/pfichtner/heapwatch?branch=master)](https://bettercodehub.com/)
 [![Maintainability](https://api.codeclimate.com/v1/badges/9d65dad82c39b80a27e2/maintainability)](https://codeclimate.com/github/pfichtner/heapwatch/maintainability)
 [![codecov](https://codecov.io/gh/pfichtner/heapwatch/branch/master/graph/badge.svg?token=xC6rGPBJVC)](https://codecov.io/gh/pfichtner/heapwatch)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpfichtner%2Fheapwatch.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpfichtner%2Fheapwatch?ref=badge_shield)
 # heapwatch
 Have you ever had the problem that your application functionally fulfilled all the requirements, but hours or days after deployment you noticed that your application suddenly allocated twice as much memory as before? A big problem is of course finding the cause in all the commits between the last and the current release. Wouldn't it be nice to be informed at the moment of the commit that your application is suddenly consuming significantly more memory than before?
 
@@ -50,3 +51,4 @@ Backlog:
 This plugin uses the following FOSS software components: 
 - garbagecat https://github.com/mgm3746/garbagecat (EPLv1.0)
 - JavaHamcrest http://hamcrest.org/JavaHamcrest/ (BSD-3-Clause)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpfichtner%2Fheapwatch.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpfichtner%2Fheapwatch?ref=badge_large)
