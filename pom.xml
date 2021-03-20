@@ -16,6 +16,7 @@
 		<module>library</module>
 		<module>heapwatch-maven-plugin</module>
 		<module>heapwatch-maven-plugin-shade</module>
+		<module>heapwatch-gradle-plugin</module>
 	</modules>
 
 	<build>
