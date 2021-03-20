@@ -59,4 +59,12 @@ public class Stats {
 		}
 		return null;
 	}
+
+	@Override
+	public String toString() {
+		return "Stats [maxHeapOccupancy=" + maxHeapOccupancy + ", maxHeapAfterGC=" + maxHeapAfterGC + ", maxHeapSpace="
+				+ maxHeapSpace + ", maxMetaspaceOccupancy=" + maxMetaspaceOccupancy + ", maxMetaspaceAfterGC="
+				+ maxMetaspaceAfterGC + ", maxMetaspaceSpace=" + maxMetaspaceSpace + "]";
+	}
+
 }
