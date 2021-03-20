@@ -1,7 +1,7 @@
 package com.github.pfichtner.heapwatch.library;
 
-import static com.github.pfichtner.heapwatch.library.ValidationResult.error;
-import static com.github.pfichtner.heapwatch.library.ValidationResult.ok;
+import static com.github.pfichtner.heapwatch.library.ValidationResults.error;
+import static com.github.pfichtner.heapwatch.library.ValidationResults.ok;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
