@@ -2,8 +2,8 @@ package com.github.pfichtner.heapwatch.mavenplugin;
 
 import static com.github.pfichtner.heapwatch.library.Comparison.valueOfIgnoreCase;
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
-import static com.github.pfichtner.heapwatch.library.ValidationResult.errors;
-import static com.github.pfichtner.heapwatch.library.ValidationResult.oks;
+import static com.github.pfichtner.heapwatch.library.ValidationResults.errors;
+import static com.github.pfichtner.heapwatch.library.ValidationResults.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.stream.Collectors.joining;

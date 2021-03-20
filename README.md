@@ -52,6 +52,6 @@ This plugin uses the following FOSS software components:
 - garbagecat https://github.com/mgm3746/garbagecat (EPLv1.0)
 - JavaHamcrest http://hamcrest.org/JavaHamcrest/ (BSD-3-Clause)
 
-
 ## License
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fpfichtner%2Fheapwatch.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fpfichtner%2Fheapwatch?ref=badge_large)
+

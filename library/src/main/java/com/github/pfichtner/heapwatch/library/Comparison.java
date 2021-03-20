@@ -17,14 +17,14 @@ public enum Comparison {
 			return lessThan(t);
 		}
 	},
-	GT() {
-		public <T extends Comparable<T>> Matcher<T> matcher(T t) {
-			return greaterThan(t);
-		}
-	},
 	LE() {
 		public <T extends Comparable<T>> Matcher<T> matcher(T t) {
 			return not(greaterThan(t));
+		}
+	},
+	EQ() {
+		public <T extends Comparable<T>> Matcher<T> matcher(T t) {
+			return equalTo(t);
 		}
 	},
 	GE() {
@@ -32,9 +32,9 @@ public enum Comparison {
 			return not(lessThan(t));
 		}
 	},
-	EQ() {
+	GT() {
 		public <T extends Comparable<T>> Matcher<T> matcher(T t) {
-			return equalTo(t);
+			return greaterThan(t);
 		}
 	};
 

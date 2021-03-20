@@ -25,6 +25,9 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<maven.version>3.3.9</maven.version>
+		<!-- Enable recording of coverage during execution of maven-invoker-plugin -->
+		<jacoco.propertyName>invoker.mavenOpts</jacoco.propertyName>
+		<jacoco.includes>org.jacoco.maven.*</jacoco.includes>
 	</properties>
 
 	<dependencies>
@@ -182,6 +185,9 @@
 								<goal>clean</goal>
 								<goal>test-compile</goal>
 							</goals>
+							<extraArtifacts>
+								<extraArtifact>org.jacoco:org.jacoco.agent:${org.jacoco.version}:jar:runtime</extraArtifact>
+							</extraArtifacts>
 						</configuration>
 						<executions>
 							<execution>

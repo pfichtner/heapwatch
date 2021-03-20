@@ -2,8 +2,8 @@ package com.github.pfichtner.heapwatch.library;
 
 import static com.github.pfichtner.heapwatch.library.Comparison.LE;
 import static com.github.pfichtner.heapwatch.library.Comparison.LT;
-import static com.github.pfichtner.heapwatch.library.ValidationResult.errors;
-import static com.github.pfichtner.heapwatch.library.ValidationResult.oks;
+import static com.github.pfichtner.heapwatch.library.ValidationResults.errors;
+import static com.github.pfichtner.heapwatch.library.ValidationResults.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_AFTER_GC;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_OCCUPANCY;
