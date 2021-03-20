@@ -186,7 +186,7 @@
 								<goal>test-compile</goal>
 							</goals>
 							<extraArtifacts>
-								<extraArtifact>org.jacoco:org.jacoco.agent:${project.version}:jar:runtime</extraArtifact>
+								<extraArtifact>org.jacoco:org.jacoco.agent:${org.jacoco.version}:jar:runtime</extraArtifact>
 							</extraArtifacts>
 						</configuration>
 						<executions>
