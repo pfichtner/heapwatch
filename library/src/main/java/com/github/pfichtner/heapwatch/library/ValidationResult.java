@@ -84,7 +84,11 @@ public abstract class ValidationResult {
 	}
 
 	public static List<ValidationResult> oks(List<ValidationResult> validations) {
-		return filter(validations, ((Predicate<? super ValidationResult>) ValidationResult::isError).negate());
+		return filter(validations, not(ValidationResult::isError));
+	}
+
+	private static <T> Predicate<T> not(Predicate<T> predicate) {
+		return predicate.negate();
 	}
 
 	private static List<ValidationResult> filter(List<ValidationResult> validations,
