@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -51,10 +50,10 @@ public class HeapWatchMojo extends AbstractMojo {
 	public boolean breakBuildOnValidationError = true;
 
 	public void execute() throws MojoExecutionException {
-		if (this.gclog == null) {
+		if (gclog == null) {
 			throw new NullPointerException("gclog");
 		}
-		if (!this.gclog.exists()) {
+		if (!gclog.exists()) {
 			throw new IllegalStateException(gclog + " does not exist");
 		}
 
@@ -86,12 +85,11 @@ public class HeapWatchMojo extends AbstractMojo {
 	}
 
 	private void validate(Validator validator) {
-		Log log = getLog();
 		List<ValidationResult> validationResults = validator.validate(stats(gclog));
-		messagesOf(oks(validationResults)).forEach(log::info);
+		messagesOf(oks(validationResults)).forEach(getLog()::info);
 		List<ValidationResult> errors = errors(validationResults);
 		if (!errors.isEmpty()) {
-			messagesOf(errors).forEach(log::error);
+			messagesOf(errors).forEach(getLog()::error);
 			if (breakBuildOnValidationError) {
 				throw new RuntimeException(messagesOf(errors).collect(joining(", ")));
 			}

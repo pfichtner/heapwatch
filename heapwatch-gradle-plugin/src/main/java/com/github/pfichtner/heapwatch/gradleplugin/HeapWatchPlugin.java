@@ -24,13 +24,17 @@ import com.github.pfichtner.heapwatch.library.acl.Memory;
 
 public class HeapWatchPlugin implements Plugin<Project> {
 
+	private Logger logger;
+	private HeapWatchPluginExtension extension;
+
 	@Override
 	public void apply(Project project) {
 		project.task("verify").doLast(task -> exec(project));
 	}
 
 	private void exec(Project project) {
-		HeapWatchPluginExtension extension = project.getExtensions().create("heapwatch",
+		logger = project.getLogger();
+		extension = project.getExtensions().create("heapwatch",
 				HeapWatchPluginExtension.class);
 
 		if (extension.gclog == null) {
@@ -55,7 +59,7 @@ public class HeapWatchPlugin implements Plugin<Project> {
 			throw new IllegalStateException("no validation configured");
 		}
 
-		validate(validator, extension, project.getLogger());
+		validate(validator);
 	}
 
 	private static <K, V> Map<K, V> nullSafe(Map<K, V> map) {
@@ -70,7 +74,7 @@ public class HeapWatchPlugin implements Plugin<Project> {
 		);
 	}
 
-	private void validate(Validator validator, HeapWatchPluginExtension extension, Logger logger) {
+	private void validate(Validator validator) {
 		List<ValidationResult> validationResults = validator.validate(stats(extension.gclog));
 		messagesOf(oks(validationResults)).forEach(logger::info);
 		List<ValidationResult> errors = errors(validationResults);

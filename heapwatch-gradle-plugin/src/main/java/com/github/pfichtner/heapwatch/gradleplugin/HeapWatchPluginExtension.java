@@ -15,6 +15,5 @@ public class HeapWatchPluginExtension {
 	public Map<String, String> metaspaceSpace;
 
 	public boolean breakBuildOnValidationError = true;
-
 	
 }
