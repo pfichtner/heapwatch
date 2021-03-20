@@ -2,8 +2,8 @@ package com.github.pfichtner.heapwatch.library;
 
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -17,10 +17,10 @@ class StatsReaderTest {
 
 	@Test
 	void canParseGcLog() throws URISyntaxException {
-		assertThat(stats(file("gc.log")).toString(), is(gcLogValues().toString()));
+		assertThat(stats(file("gc.log")), samePropertyValuesAs(expectedStats()));
 	}
 
-	private static Stats gcLogValues() {
+	private static Stats expectedStats() {
 		Stats stats = new Stats();
 		stats.maxHeapOccupancy = memory("679166K");
 		stats.maxHeapAfterGC = memory("364048K");
