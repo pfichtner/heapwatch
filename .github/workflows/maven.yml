@@ -34,15 +34,14 @@ jobs:
       run: ./mvnw -B package integration-test -P run-its --file pom.xml
     - name: Upload to Codecov
       uses: codecov/codecov-action@v1
-    - name: Upload to code climate
-      uses: paambaati/codeclimate-action@v2.7.5
-      env:
-        CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
-        JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
-      with:
-	debug: true
-        coverageCommand: ./mvnw -B package integration-test -P run-its --file pom.xml
-        coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
+    #- name: Upload to code climate
+    #  uses: paambaati/codeclimate-action@v2.7.5
+    #  env:
+    #    CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+    #    JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
+    #  with:
+    #    coverageCommand: ./mvnw -B package integration-test -P run-its --file pom.xml
+    #    coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
 
   publish-snapshot:
     needs: build
