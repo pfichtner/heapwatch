@@ -38,6 +38,7 @@ jobs:
       uses: paambaati/codeclimate-action@v2.7.5
       env:
         CC_TEST_REPORTER_ID: de9fffc2061eee263e79f8c277080662467483f426fa3b905f03f30ea94476f5
+        JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
       with:
         # The report file must be there, otherwise Code Climate won't find it
         coverageCommand: mvn test
