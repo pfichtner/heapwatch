@@ -38,6 +38,10 @@ jobs:
       uses: paambaati/codeclimate-action@v2.7.5
       env:
         CC_TEST_REPORTER_ID: de9fffc2061eee263e79f8c277080662467483f426fa3b905f03f30ea94476f5
+      with:
+        # The report file must be there, otherwise Code Climate won't find it
+        coverageCommand: mvn test
+        coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
 
   publish-snapshot:
     needs: build
@@ -56,8 +60,4 @@ jobs:
         run: ./mvnw -B --no-transfer-progress -DskipTests deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          # The report file must be there, otherwise Code Climate won't find it
-          coverageCommand: mvn test
-          coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
 
