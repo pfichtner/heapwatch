@@ -26,7 +26,7 @@
 		<dependency>
                         <groupId>com.github.mgm3746</groupId>
                         <artifactId>garbagecat</artifactId>
-                        <version>c2d3ebde5a</version>
+			<version>c93ad5b214</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-cli</groupId>
