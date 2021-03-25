@@ -56,7 +56,8 @@ jobs:
         run: ./mvnw -B --no-transfer-progress -DskipTests deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-	with:
-	  # The report file must be there, otherwise Code Climate won't find it
-	  coverageCommand: mvn test
-	  coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
+        with:
+          # The report file must be there, otherwise Code Climate won't find it
+          coverageCommand: mvn test
+          coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
+
