@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.assertj.core.data.MapEntry;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class HeapWatchMojoTest {
 	public void failsIfGcLogIsNotGiven() {
 		givenGcLog(null);
 		assertThatThrownBy(() -> whenExecuted()).satisfies(
-				e -> assertThat(e).isExactlyInstanceOf(NullPointerException.class).hasMessageContaining("gclog"));
+				e -> assertThat(e).isExactlyInstanceOf(MojoFailureException.class).hasMessageContaining("gclog"));
 	}
 
 	@Test
@@ -41,7 +41,7 @@ public class HeapWatchMojoTest {
 		givenGcLog(pathInTempFolder(filename));
 		givenHeapSpaceValidation(lowerThan("42M"));
 		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
-			assertThat(e).isExactlyInstanceOf(IllegalStateException.class) //
+			assertThat(e).isExactlyInstanceOf(MojoFailureException.class) //
 					.hasMessageContaining(filename) //
 					.hasMessageContaining("not exist") //
 			;
@@ -63,7 +63,7 @@ public class HeapWatchMojoTest {
 	}
 
 	private static void verifyTheNoValidationExceptionIsThrown(Throwable t) {
-		assertThat(t).isExactlyInstanceOf(IllegalStateException.class).hasMessageContaining("no validation");
+		assertThat(t).isExactlyInstanceOf(MojoFailureException.class).hasMessageContaining("no validation");
 	}
 
 	@Test
@@ -72,7 +72,7 @@ public class HeapWatchMojoTest {
 		givenGcLog(resourceInTestFolder("gc.log"));
 		givenHeapSpaceValidation(lowerThan(maxHeapSpaceAllowed));
 		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
-			assertThat(e).isInstanceOf(RuntimeException.class) //
+			assertThat(e).isInstanceOf(MojoFailureException.class) //
 					.hasMessageContaining("heapSpace") //
 					.hasMessageContaining(maxHeapSpaceAllowed) //
 					.hasMessageContaining(maxHeapSpaceUsedInGcLog()) //
@@ -86,7 +86,7 @@ public class HeapWatchMojoTest {
 		givenHeapSpaceValidation(lowerThan("42M"));
 		givenHeapSpaceValidation(greaterThan("1G"));
 		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
-			assertThat(e).isInstanceOf(RuntimeException.class) //
+			assertThat(e).isInstanceOf(MojoFailureException.class) //
 					.hasMessageContaining("heapSpace") //
 					.hasMessageContaining("42M") //
 					.hasMessageContaining("1G") //
@@ -134,7 +134,7 @@ public class HeapWatchMojoTest {
 		return new File(HeapWatchMojoTest.class.getClassLoader().getResource(name).toURI());
 	}
 
-	private void whenExecuted() throws MojoExecutionException {
+	private void whenExecuted() throws MojoFailureException {
 		sut.execute();
 	}
 

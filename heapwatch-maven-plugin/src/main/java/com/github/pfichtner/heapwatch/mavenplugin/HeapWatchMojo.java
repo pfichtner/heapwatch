@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -50,12 +50,12 @@ public class HeapWatchMojo extends AbstractMojo {
 	@Parameter(name = "breakBuildOnValidationError")
 	public boolean breakBuildOnValidationError = true;
 
-	public void execute() throws MojoExecutionException {
+	public void execute() throws MojoFailureException {
 		if (this.gclog == null) {
-			throw new NullPointerException("gclog");
+			throw new MojoFailureException("gclog must not be null");
 		}
 		if (!this.gclog.exists()) {
-			throw new IllegalStateException(gclog + " does not exist");
+			throw new MojoFailureException(gclog + " does not exist");
 		}
 
 		Validator validator = new Validator();
@@ -67,7 +67,7 @@ public class HeapWatchMojo extends AbstractMojo {
 		nullSafe(metaspaceSpace).entrySet().forEach(entry -> addValidation(validator, "metaspaceSpace", entry));
 
 		if (validator.getValidations() == 0) {
-			throw new IllegalStateException("no validation configured");
+			throw new MojoFailureException("no validation configured");
 		}
 
 		validate(validator);
@@ -85,7 +85,7 @@ public class HeapWatchMojo extends AbstractMojo {
 		);
 	}
 
-	private void validate(Validator validator) {
+	private void validate(Validator validator) throws MojoFailureException {
 		Log log = getLog();
 		List<ValidationResult> validationResults = validator.validate(stats(gclog));
 		messagesOf(oks(validationResults)).forEach(log::info);
@@ -93,7 +93,7 @@ public class HeapWatchMojo extends AbstractMojo {
 		if (!errors.isEmpty()) {
 			messagesOf(errors).forEach(log::error);
 			if (breakBuildOnValidationError) {
-				throw new RuntimeException(messagesOf(errors).collect(joining(", ")));
+				throw new MojoFailureException(messagesOf(errors).collect(joining(", ")));
 			}
 		}
 	}
