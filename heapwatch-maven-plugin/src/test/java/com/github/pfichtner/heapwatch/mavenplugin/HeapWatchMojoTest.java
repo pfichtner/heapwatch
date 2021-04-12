@@ -95,6 +95,32 @@ public class HeapWatchMojoTest {
 		});
 	}
 
+	@Test
+	public void failsIfThereAreRelativeComparisionAndNoReferenceFileWasGiven() throws Exception {
+		givenGcLog(resourceInTestFolder("gc.log"));
+		givenHeapSpaceValidation(lowerThan("10%"));
+		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
+			assertThat(e).isInstanceOf(MojoFailureException.class) //
+					.hasMessageContaining("previous").hasMessageContaining("not configured") //
+			;
+		});
+	}
+
+	@Test
+	public void failsIfThereAreRelativeComparisionAndReferenceFileDoesNotExist() throws Exception {
+		String previousStatsFilename = "non-existing-previous-stats.file";
+		givenGcLog(resourceInTestFolder("gc.log"));
+		givenHeapSpaceValidation(lowerThan("10%"));
+		givenPreviousStats(pathInTempFolder(previousStatsFilename));
+		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
+			assertThat(e).isInstanceOf(MojoFailureException.class) //
+					.hasMessageContaining(previousStatsFilename) //
+					.hasMessageContaining("previous") //
+					.hasMessageContaining("exist") //
+			;
+		});
+	}
+
 	private void givenGcLog(File file) {
 		sut.gclog = file;
 	}
@@ -108,6 +134,10 @@ public class HeapWatchMojoTest {
 			sut.heapSpace = new HashMap<String, String>();
 		}
 		sut.heapSpace.put(entry.getKey(), entry.getValue());
+	}
+
+	private void givenPreviousStats(File previous) {
+		sut.previous = previous;
 	}
 
 	private Map<String, String> nullMap() {

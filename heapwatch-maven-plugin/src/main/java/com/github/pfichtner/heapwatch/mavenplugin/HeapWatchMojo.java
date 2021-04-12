@@ -8,9 +8,13 @@ import static java.util.stream.Collectors.joining;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATION_TEST;
 
 import java.io.File;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -21,7 +25,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import com.github.pfichtner.heapwatch.library.ValidationResult;
 import com.github.pfichtner.heapwatch.library.Validator;
-import com.github.pfichtner.heapwatch.library.acl.Memory;
+import com.github.pfichtner.heapwatch.library.acl.Stats;
 
 @Mojo(name = HeapWatchMojo.GOAL, defaultPhase = POST_INTEGRATION_TEST)
 public class HeapWatchMojo extends AbstractMojo {
@@ -47,6 +51,9 @@ public class HeapWatchMojo extends AbstractMojo {
 	@Parameter(name = "breakBuildOnValidationError")
 	public boolean breakBuildOnValidationError = true;
 
+	@Parameter(name = "previousStats")
+	public File previous;
+
 	public void execute() throws MojoFailureException {
 		if (this.gclog == null) {
 			throw new MojoFailureException("gclog must not be null");
@@ -70,9 +77,37 @@ public class HeapWatchMojo extends AbstractMojo {
 		validate(validator);
 	}
 
-	private void add(Validator validator, Map<String, String> map, String name) {
-		nullSafe(map).entrySet()
-				.forEach(entry -> validator.addValidation(name, entry.getKey(), toMemory(entry.getValue())));
+	private void add(Validator validator, Map<String, String> map, String name) throws MojoFailureException {
+		Set<Entry<String, String>> entrySet = nullSafe(map).entrySet();
+		for (Entry<String, String> entry : entrySet) {
+			String value = entry.getValue().trim();
+			if (value.endsWith("%")) {
+				validator.addValidation(name, entry.getKey(), (100.0 + parse(value)) / 100, getPrevious());
+			} else {
+				validator.addValidation(name, entry.getKey(), memory(value));
+			}
+		}
+	}
+
+	public Stats getPrevious() throws MojoFailureException {
+		if (previous == null) {
+			throw new MojoFailureException("previous stats not configured");
+		}
+		Stats stats = null;
+
+		if (!previous.exists()) {
+			throw new MojoFailureException("previous stats file " + previous + " does not exist");
+		}
+
+		return stats;
+	}
+
+	private static double parse(String value) {
+		try {
+			return NumberFormat.getNumberInstance().parse(value).doubleValue();
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static <K, V> Map<K, V> nullSafe(Map<K, V> map) {
@@ -94,10 +129,6 @@ public class HeapWatchMojo extends AbstractMojo {
 
 	private Stream<String> messagesOf(List<ValidationResult> results) {
 		return results.stream().map(ValidationResult::getMessage);
-	}
-
-	private static Memory toMemory(String value) {
-		return memory(value);
 	}
 
 }
