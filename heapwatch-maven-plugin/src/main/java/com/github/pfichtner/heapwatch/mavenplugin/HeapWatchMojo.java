@@ -11,7 +11,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -57,12 +56,12 @@ public class HeapWatchMojo extends AbstractMojo {
 		}
 
 		Validator validator = new Validator();
-		nullSafe(heapOccupancy).entrySet().forEach(entry -> addValidation(validator, "heapOccupancy", entry));
-		nullSafe(heapAfterGC).entrySet().forEach(entry -> addValidation(validator, "heapAfterGC", entry));
-		nullSafe(heapSpace).entrySet().forEach(entry -> addValidation(validator, "heapSpace", entry));
-		nullSafe(metaspaceOccupancy).entrySet().forEach(entry -> addValidation(validator, "metaspaceOccupancy", entry));
-		nullSafe(metaspaceAfterGC).entrySet().forEach(entry -> addValidation(validator, "metaspaceAfterGC", entry));
-		nullSafe(metaspaceSpace).entrySet().forEach(entry -> addValidation(validator, "metaspaceSpace", entry));
+		add(validator, heapOccupancy, "heapOccupancy");
+		add(validator, heapAfterGC, "heapAfterGC");
+		add(validator, heapSpace, "heapSpace");
+		add(validator, metaspaceOccupancy, "metaspaceOccupancy");
+		add(validator, metaspaceAfterGC, "metaspaceAfterGC");
+		add(validator, metaspaceSpace, "metaspaceSpace");
 
 		if (validator.getValidations() == 0) {
 			throw new MojoFailureException("no validation configured");
@@ -71,12 +70,13 @@ public class HeapWatchMojo extends AbstractMojo {
 		validate(validator);
 	}
 
-	private static <K, V> Map<K, V> nullSafe(Map<K, V> map) {
-		return map == null ? Collections.emptyMap() : map;
+	private void add(Validator validator, Map<String, String> map, String name) {
+		nullSafe(map).entrySet()
+				.forEach(entry -> validator.addValidation(name, entry.getKey(), toMemory(entry.getValue())));
 	}
 
-	private static void addValidation(Validator validator, String name, Entry<String, String> entry) {
-		validator.addValidation(name, entry.getKey(), toMemory(entry.getValue()));
+	private static <K, V> Map<K, V> nullSafe(Map<K, V> map) {
+		return map == null ? Collections.emptyMap() : map;
 	}
 
 	private void validate(Validator validator) throws MojoFailureException {
