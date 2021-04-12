@@ -1,11 +1,9 @@
 package com.github.pfichtner.heapwatch.mavenplugin;
 
-import static com.github.pfichtner.heapwatch.library.Comparison.valueOfIgnoreCase;
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
 import static com.github.pfichtner.heapwatch.library.ValidationResults.errors;
 import static com.github.pfichtner.heapwatch.library.ValidationResults.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
-import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.stream.Collectors.joining;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATION_TEST;
 
@@ -78,11 +76,7 @@ public class HeapWatchMojo extends AbstractMojo {
 	}
 
 	private static void addValidation(Validator validator, String name, Entry<String, String> entry) {
-		validator.addValidation( //
-				functionForAttribute(name), //
-				valueOfIgnoreCase(entry.getKey()).matcher(toMemory(entry.getValue())), //
-				name //
-		);
+		validator.addValidation(name, entry.getKey(), toMemory(entry.getValue()));
 	}
 
 	private void validate(Validator validator) throws MojoFailureException {
