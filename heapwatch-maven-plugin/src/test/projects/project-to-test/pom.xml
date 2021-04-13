@@ -12,6 +12,8 @@
 					<heapSpace>
 						<lt>42M</lt>
 					</heapSpace>
+					<previousStats>/some/path/to/prev.json</previousStats>
+					<updatePreviousFile>true</updatePreviousFile>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -27,6 +27,8 @@ public class HeapWatchMojoConfigTest {
 			assertThat(mojo.gclog).isNotNull()
 					.satisfies(f -> assertThat(f.getAbsolutePath()).isEqualTo("/some/path/to/gc.log"));
 			assertThat(mojo.heapSpace).containsExactly(lowerThan("42M"));
+			assertThat(mojo.previousStats).isNotNull();
+			assertThat(mojo.updatePreviousFile).isTrue();
 		});
 
 	}

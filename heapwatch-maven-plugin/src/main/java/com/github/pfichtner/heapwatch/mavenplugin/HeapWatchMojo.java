@@ -54,7 +54,7 @@ public class HeapWatchMojo extends AbstractMojo {
 	public boolean breakBuildOnValidationError = true;
 
 	@Parameter(name = "previousStats")
-	public File previous;
+	public File previousStats;
 
 	@Parameter(name = "updatePreviousFile")
 	public boolean updatePreviousFile;
@@ -89,9 +89,9 @@ public class HeapWatchMojo extends AbstractMojo {
 
 	private void updatePreviousFile(Stats stats) throws MojoExecutionException {
 		try {
-			JsonIO.write(previous, stats);
+			JsonIO.write(previousStats, stats);
 		} catch (IOException e) {
-			throw new MojoExecutionException("Error writing previous stats " + previous, e);
+			throw new MojoExecutionException("Error writing previous stats " + previousStats, e);
 		}
 	}
 
@@ -109,19 +109,19 @@ public class HeapWatchMojo extends AbstractMojo {
 	}
 
 	public Stats getPrevious() throws MojoFailureException, MojoExecutionException {
-		if (previous == null) {
+		if (previousStats == null) {
 			throw new MojoFailureException("previous stats not configured");
 		}
-		if (!previous.exists()) {
+		if (!previousStats.exists()) {
 			if (updatePreviousFile) {
 				return new Stats();
 			}
-			throw new MojoFailureException("previous stats file " + previous + " does not exist");
+			throw new MojoFailureException("previous stats file " + previousStats + " does not exist");
 		}
 		try {
-			return JsonIO.read(previous);
+			return JsonIO.read(previousStats);
 		} catch (IOException e) {
-			throw new MojoExecutionException("Error reading previous stats " + previous, e);
+			throw new MojoExecutionException("Error reading previous stats " + previousStats, e);
 		}
 	}
 

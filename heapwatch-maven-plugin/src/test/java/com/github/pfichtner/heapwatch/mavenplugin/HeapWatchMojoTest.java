@@ -232,7 +232,7 @@ public class HeapWatchMojoTest {
 	}
 
 	private void givenPreviousStats(File previous) {
-		sut.previous = previous;
+		sut.previousStats = previous;
 	}
 
 	private Map<String, String> nullMap() {
