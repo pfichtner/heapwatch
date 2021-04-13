@@ -1,6 +1,7 @@
 package com.github.pfichtner.heapwatch.mavenplugin;
 
 import static com.github.pfichtner.heapwatch.library.StatsReader.stats;
+import static com.github.pfichtner.heapwatch.mavenplugin.JsonIO.write;
 import static com.github.pfichtner.heapwatch.mavenplugin.TestUtil.greaterThan;
 import static com.github.pfichtner.heapwatch.mavenplugin.TestUtil.lowerThan;
 import static com.github.pfichtner.heapwatch.mavenplugin.TestUtil.touch;
@@ -18,12 +19,12 @@ import java.util.Map;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.assertj.core.data.MapEntry;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.google.common.io.Files;
+import com.github.pfichtner.heapwatch.library.StatsReader;
+import com.github.pfichtner.heapwatch.library.acl.Stats;
 
 public class HeapWatchMojoTest {
 
@@ -102,7 +103,7 @@ public class HeapWatchMojoTest {
 	@Test
 	public void failsIfThereAreRelativeComparisionAndNoReferenceFileWasGiven() throws Exception {
 		givenGcLog(resourceInTestFolder("gc.log"));
-		givenHeapSpaceValidation(lowerThan("10%"));
+		givenAnyValidation();
 		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
 			assertThat(e).isInstanceOf(MojoFailureException.class) //
 					.hasMessageContaining("previous").hasMessageContaining("not configured") //
@@ -112,9 +113,9 @@ public class HeapWatchMojoTest {
 
 	@Test
 	public void failsIfThereAreRelativeComparisionAndReferenceFileDoesNotExist() throws Exception {
-		String nonExistingFile = "non-existing-previous-stats.file";
+		String nonExistingFile = "non-existing-previous-gc-stats.json";
 		givenGcLog(resourceInTestFolder("gc.log"));
-		givenHeapSpaceValidation(lowerThan("10%"));
+		givenAnyValidation();
 		givenPreviousStats(pathInTempFolder(nonExistingFile));
 		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
 			assertThat(e).isInstanceOf(MojoFailureException.class) //
@@ -126,39 +127,82 @@ public class HeapWatchMojoTest {
 	}
 
 	@Test
-	public void throwsExceptionIfFilesAreSame() throws Exception {
-		String gcLog = "gc.log";
-		File stats = resourceInTestFolder(gcLog);
-		givenGcLog(stats);
-		givenPreviousStats(stats);
-		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
-			assertThat(e).isInstanceOf(MojoFailureException.class) //
-					.hasMessageContaining(gcLog) //
-					.hasMessageContaining("same") //
-			;
-		});
+	public void doesPassIfNotGrown_AndPreviousFileIsNotOverwritten() throws Exception {
+		File statsFile = resourceInTestFolder("gc.log");
+		File previousStats = pathInTempFolder("previous-gc-stats.json");
+		Stats statsWithMaxHeapSpaceOnly = emptyStats();
+		statsWithMaxHeapSpaceOnly.maxHeapSpace = StatsReader.stats(statsFile).maxHeapSpace;
+		write(previousStats, statsWithMaxHeapSpaceOnly);
+		givenGcLog(statsFile);
+		givenPreviousStats(previousStats);
+
+		givenAnyValidation();
+		whenExecuted();
+		assertEquals(previousStats, statsWithMaxHeapSpaceOnly);
 	}
 
 	@Test
-	@Ignore
-	public void doesPassIfNotGrown() throws Exception {
-		File stats = resourceInTestFolder("gc.log");
-		File previousStats = pathInTempFolder("previous-gc.log");
-		copy(stats, previousStats);
-
-		givenGcLog(stats);
+	public void doesPassIfNoPreviousValue_AndPreviousFileIsNotCreated() throws Exception {
+		File statsFile = resourceInTestFolder("gc.log");
+		File previousStats = pathInTempFolder("previous-gc-stats.json");
+		writeEmptyJson(previousStats);
+		givenGcLog(statsFile);
 		givenPreviousStats(previousStats);
-
-		givenHeapSpaceValidation(lowerThan("0.001%"));
+		givenAnyValidation();
 		whenExecuted();
+		assertEquals(previousStats, emptyStats());
 	}
 
-	private void copy(File source, File target) throws IOException {
-		Files.copy(source, target);
+	@Test
+	public void doesOverwritePreviousStatsIfSet() throws Exception {
+		File statsFile = resourceInTestFolder("gc.log");
+		File previousStats = pathInTempFolder("previous-gc-stats.json");
+		writeEmptyJson(previousStats);
+		givenGcLog(statsFile);
+		givenPreviousStats(previousStats);
+		givenUpdatePreviousFile(true);
+		givenAnyValidation();
+		whenExecuted();
+		assertEquals(previousStats, stats(statsFile));
+	}
+
+	@Test
+	public void doesCreatePreviousStatsIfSet() throws Exception {
+		File statsFile = resourceInTestFolder("gc.log");
+		givenGcLog(statsFile);
+		givenPreviousStats(pathInTempFolder("previous-gc-stats.json"));
+		givenUpdatePreviousFile(true);
+		givenAnyValidation();
+		whenExecuted();
+		assertEquals(pathInTempFolder("previous-gc-stats.json"), stats(statsFile));
+	}
+
+	private void assertEquals(File previousStats, Stats stats) throws IOException {
+		assertThat(read(previousStats)).usingRecursiveComparison().isEqualTo(stats);
+	}
+
+	private Stats read(File file) throws IOException {
+		return JsonIO.read(file);
+	}
+
+	private void writeEmptyJson(File file) throws IOException {
+		write(file, emptyStats());
+	}
+
+	private Stats emptyStats() {
+		return new Stats();
+	}
+
+	private void givenUpdatePreviousFile(boolean update) {
+		sut.updatePreviousFile = update;
 	}
 
 	private void givenGcLog(File file) {
 		sut.gclog = file;
+	}
+
+	private void givenAnyValidation() {
+		givenHeapSpaceValidation(lowerThan("0.001%"));
 	}
 
 	private void givenHeapSpaceValidation(Map<String, String> hashMap) {

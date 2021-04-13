@@ -56,19 +56,15 @@ public class HeapWatchMojo extends AbstractMojo {
 	@Parameter(name = "previousStats")
 	public File previous;
 
+	@Parameter(name = "updatePreviousFile")
+	public boolean updatePreviousFile;
+
 	public void execute() throws MojoFailureException, MojoExecutionException {
 		if (this.gclog == null) {
 			throw new MojoFailureException("gclog must not be null");
 		}
 		if (!this.gclog.exists()) {
 			throw new MojoFailureException(gclog + " does not exist");
-		}
-		try {
-			if (previous != null && previous.getCanonicalFile().equals(gclog.getCanonicalFile())) {
-				throw new MojoFailureException("gclog and previous point to the same file (" + gclog + ")");
-			}
-		} catch (IOException e) {
-			throw new MojoExecutionException("Error determing canonical file", e);
 		}
 
 		Validator validator = new Validator();
@@ -83,10 +79,24 @@ public class HeapWatchMojo extends AbstractMojo {
 			throw new MojoFailureException("no validation configured");
 		}
 
-		validate(validator);
+		Stats stats = stats(gclog);
+		validate(validator, stats);
+
+		if (this.updatePreviousFile) {
+			updatePreviousFile(stats);
+		}
 	}
 
-	private void add(Validator validator, Map<String, String> map, String name) throws MojoFailureException {
+	private void updatePreviousFile(Stats stats) throws MojoExecutionException {
+		try {
+			JsonIO.write(previous, stats);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error writing previous stats " + previous, e);
+		}
+	}
+
+	private void add(Validator validator, Map<String, String> map, String name)
+			throws MojoFailureException, MojoExecutionException {
 		Set<Entry<String, String>> entrySet = nullSafe(map).entrySet();
 		for (Entry<String, String> entry : entrySet) {
 			String value = entry.getValue().trim();
@@ -98,17 +108,21 @@ public class HeapWatchMojo extends AbstractMojo {
 		}
 	}
 
-	public Stats getPrevious() throws MojoFailureException {
+	public Stats getPrevious() throws MojoFailureException, MojoExecutionException {
 		if (previous == null) {
 			throw new MojoFailureException("previous stats not configured");
 		}
-		Stats stats = null;
-
 		if (!previous.exists()) {
+			if (updatePreviousFile) {
+				return new Stats();
+			}
 			throw new MojoFailureException("previous stats file " + previous + " does not exist");
 		}
-
-		return stats;
+		try {
+			return JsonIO.read(previous);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error reading previous stats " + previous, e);
+		}
 	}
 
 	private static double parse(String value) {
@@ -123,9 +137,9 @@ public class HeapWatchMojo extends AbstractMojo {
 		return map == null ? Collections.emptyMap() : map;
 	}
 
-	private void validate(Validator validator) throws MojoFailureException {
+	private void validate(Validator validator, Stats stats) throws MojoFailureException {
 		Log log = getLog();
-		List<ValidationResult> validationResults = validator.validate(stats(gclog));
+		List<ValidationResult> validationResults = validator.validate(stats);
 		messagesOf(oks(validationResults)).forEach(log::info);
 		List<ValidationResult> errors = errors(validationResults);
 		if (!errors.isEmpty()) {

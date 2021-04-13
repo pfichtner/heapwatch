@@ -5,6 +5,7 @@ import static com.github.pfichtner.heapwatch.library.ValidationResults.error;
 import static com.github.pfichtner.heapwatch.library.ValidationResults.ok;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.CoreMatchers.anything;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,22 +23,23 @@ public class Validator {
 	public Validator addValidation(String name, String comparison, Memory memory) {
 		return addValidation( //
 				functionForAttribute(name), //
-				valueOfIgnoreCase(comparison).matcher(memory), // fs
-				name //
-		);
-	}
-
-	public Validator addValidation(String name, String comparison, double mul, Stats prev) {
-		Function<Stats, Memory> functionForAttribute = functionForAttribute(name);
-		Memory memory = functionForAttribute.apply(prev).multiply(mul);
-		return addValidation( //
-				functionForAttribute, //
 				valueOfIgnoreCase(comparison).matcher(memory), //
 				name //
 		);
 	}
 
-	public <T> Validator addValidation(Function<Stats, T> function, Matcher<T> matcher, String name) {
+	public Validator addValidation(String name, String comparison, double mul, Stats previousStats) {
+		Function<Stats, Memory> functionForAttribute = functionForAttribute(name);
+		Memory previousValue = functionForAttribute.apply(previousStats);
+		return addValidation( //
+				functionForAttribute, //
+				previousValue == null ? anything("no previous value for " + name)
+						: valueOfIgnoreCase(comparison).matcher(previousValue.multiply(mul)), //
+				name //
+		);
+	}
+
+	public <T> Validator addValidation(Function<Stats, T> function, Matcher<? super T> matcher, String name) {
 		validations.add(new FunctionBasedMatcher<T>(name, matcher, function));
 		return this;
 	}
