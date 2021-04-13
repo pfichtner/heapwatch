@@ -8,6 +8,7 @@ import static java.util.stream.Collectors.joining;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATION_TEST;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Collections;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -54,12 +56,19 @@ public class HeapWatchMojo extends AbstractMojo {
 	@Parameter(name = "previousStats")
 	public File previous;
 
-	public void execute() throws MojoFailureException {
+	public void execute() throws MojoFailureException, MojoExecutionException {
 		if (this.gclog == null) {
 			throw new MojoFailureException("gclog must not be null");
 		}
 		if (!this.gclog.exists()) {
 			throw new MojoFailureException(gclog + " does not exist");
+		}
+		try {
+			if (previous != null && previous.getCanonicalFile().equals(gclog.getCanonicalFile())) {
+				throw new MojoFailureException("gclog and previous point to the same file (" + gclog + ")");
+			}
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error determing canonical file", e);
 		}
 
 		Validator validator = new Validator();

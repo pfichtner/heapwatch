@@ -15,11 +15,15 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.assertj.core.data.MapEntry;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import com.google.common.io.Files;
 
 public class HeapWatchMojoTest {
 
@@ -37,12 +41,12 @@ public class HeapWatchMojoTest {
 
 	@Test
 	public void failsIfGcLogDoesNotExist() {
-		String filename = "someNonExistingFile";
-		givenGcLog(pathInTempFolder(filename));
+		String nonExistingFile = "someNonExistingFile";
+		givenGcLog(pathInTempFolder(nonExistingFile));
 		givenHeapSpaceValidation(lowerThan("42M"));
 		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
 			assertThat(e).isExactlyInstanceOf(MojoFailureException.class) //
-					.hasMessageContaining(filename) //
+					.hasMessageContaining(nonExistingFile) //
 					.hasMessageContaining("not exist") //
 			;
 		});
@@ -108,17 +112,49 @@ public class HeapWatchMojoTest {
 
 	@Test
 	public void failsIfThereAreRelativeComparisionAndReferenceFileDoesNotExist() throws Exception {
-		String previousStatsFilename = "non-existing-previous-stats.file";
+		String nonExistingFile = "non-existing-previous-stats.file";
 		givenGcLog(resourceInTestFolder("gc.log"));
 		givenHeapSpaceValidation(lowerThan("10%"));
-		givenPreviousStats(pathInTempFolder(previousStatsFilename));
+		givenPreviousStats(pathInTempFolder(nonExistingFile));
 		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
 			assertThat(e).isInstanceOf(MojoFailureException.class) //
-					.hasMessageContaining(previousStatsFilename) //
+					.hasMessageContaining(nonExistingFile) //
 					.hasMessageContaining("previous") //
 					.hasMessageContaining("exist") //
 			;
 		});
+	}
+
+	@Test
+	public void throwsExceptionIfFilesAreSame() throws Exception {
+		String gcLog = "gc.log";
+		File stats = resourceInTestFolder(gcLog);
+		givenGcLog(stats);
+		givenPreviousStats(stats);
+		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
+			assertThat(e).isInstanceOf(MojoFailureException.class) //
+					.hasMessageContaining(gcLog) //
+					.hasMessageContaining("same") //
+			;
+		});
+	}
+
+	@Test
+	@Ignore
+	public void doesPassIfNotGrown() throws Exception {
+		File stats = resourceInTestFolder("gc.log");
+		File previousStats = pathInTempFolder("previous-gc.log");
+		copy(stats, previousStats);
+
+		givenGcLog(stats);
+		givenPreviousStats(previousStats);
+
+		givenHeapSpaceValidation(lowerThan("0.001%"));
+		whenExecuted();
+	}
+
+	private void copy(File source, File target) throws IOException {
+		Files.copy(source, target);
 	}
 
 	private void givenGcLog(File file) {
@@ -164,7 +200,7 @@ public class HeapWatchMojoTest {
 		return new File(HeapWatchMojoTest.class.getClassLoader().getResource(name).toURI());
 	}
 
-	private void whenExecuted() throws MojoFailureException {
+	private void whenExecuted() throws MojoFailureException, MojoExecutionException {
 		sut.execute();
 	}
 
