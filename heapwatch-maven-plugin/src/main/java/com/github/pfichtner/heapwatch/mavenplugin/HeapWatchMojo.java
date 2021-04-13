@@ -82,9 +82,13 @@ public class HeapWatchMojo extends AbstractMojo {
 		Stats stats = stats(gclog);
 		validate(validator, stats);
 
-		if (this.updatePreviousFile) {
+		if (this.updatePreviousFile || shouldCreate()) {
 			updatePreviousFile(stats);
 		}
+	}
+
+	private boolean shouldCreate() {
+		return previousStats != null && !previousStats.exists();
 	}
 
 	private void updatePreviousFile(Stats stats) throws MojoExecutionException {
@@ -113,10 +117,7 @@ public class HeapWatchMojo extends AbstractMojo {
 			throw new MojoFailureException("previous stats not configured");
 		}
 		if (!previousStats.exists()) {
-			if (updatePreviousFile) {
-				return new Stats();
-			}
-			throw new MojoFailureException("previous stats file " + previousStats + " does not exist");
+			return new Stats();
 		}
 		try {
 			return JsonIO.read(previousStats);

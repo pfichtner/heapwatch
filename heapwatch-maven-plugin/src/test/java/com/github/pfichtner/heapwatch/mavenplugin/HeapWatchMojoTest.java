@@ -9,6 +9,7 @@ import static java.lang.String.valueOf;
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.util.Map;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.assertj.core.data.MapEntry;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -112,21 +114,6 @@ public class HeapWatchMojoTest {
 	}
 
 	@Test
-	public void failsIfThereAreRelativeComparisionAndReferenceFileDoesNotExist() throws Exception {
-		String nonExistingFile = "non-existing-previous-gc-stats.json";
-		givenGcLog(resourceInTestFolder("gc.log"));
-		givenAnyValidation();
-		givenPreviousStats(pathInTempFolder(nonExistingFile));
-		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
-			assertThat(e).isInstanceOf(MojoFailureException.class) //
-					.hasMessageContaining(nonExistingFile) //
-					.hasMessageContaining("previous") //
-					.hasMessageContaining("exist") //
-			;
-		});
-	}
-
-	@Test
 	public void doesPassIfNotGrown_AndPreviousFileIsNotOverwritten() throws Exception {
 		File statsFile = resourceInTestFolder("gc.log");
 		File previousStats = pathInTempFolder("previous-gc-stats.json");
@@ -151,6 +138,18 @@ public class HeapWatchMojoTest {
 		givenAnyValidation();
 		whenExecuted();
 		assertEquals(previousStats, emptyStats());
+	}
+
+	@Test
+	public void doesCreatePreviousStatsIfSetAndNotExisting() throws Exception {
+		File previousFileThatShouldBeCreated = pathInTempFolder("non-existing-previous-gc-stats.json");
+		previousFileThatShouldBeCreated.delete();
+		File statsFile = resourceInTestFolder("gc.log");
+		givenGcLog(statsFile);
+		givenAnyValidation();
+		givenPreviousStats(previousFileThatShouldBeCreated);
+		whenExecuted();
+		assertEquals(previousFileThatShouldBeCreated, stats(statsFile));
 	}
 
 	@Test
@@ -190,6 +189,13 @@ public class HeapWatchMojoTest {
 		givenAnyValidation();
 		whenExecuted();
 		assertEquals(pathInTempFolder("previous-gc-stats.json"), stats(statsFile));
+	}
+
+	@Test
+	@Ignore
+	public void missing() {
+		// TODO
+		fail("A test where validation fails but there is the new reference file written to tmp (and the filename is printed to stdout and/or part of the exception text)");
 	}
 
 	private static void assertEquals(File previousStats, Stats stats) {
