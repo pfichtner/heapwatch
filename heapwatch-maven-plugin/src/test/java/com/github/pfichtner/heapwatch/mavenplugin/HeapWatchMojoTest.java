@@ -198,6 +198,15 @@ public class HeapWatchMojoTest {
 		fail("A test where validation fails but there is the new reference file written to tmp (and the filename is printed to stdout and/or part of the exception text)");
 	}
 
+	@Test
+	@Ignore
+	public void enhancement() {
+		// TODO 
+		// OLD <updatePreviousFile>true</updatePreviousFile>
+		// NEW <updatePreviousFileOnSuccess>true</updatePreviousFileOnSuccess>
+		// NEW <updatePreviousFileOnFailure>false</updatePreviousFileOnFailure>
+	}
+
 	private static void assertEquals(File previousStats, Stats stats) {
 		try {
 			assertThat(read(previousStats)).usingRecursiveComparison().isEqualTo(stats);
