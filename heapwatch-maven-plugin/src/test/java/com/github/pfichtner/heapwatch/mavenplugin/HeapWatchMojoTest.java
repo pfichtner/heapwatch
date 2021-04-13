@@ -145,7 +145,7 @@ public class HeapWatchMojoTest {
 	public void doesPassIfNoPreviousValue_AndPreviousFileIsNotCreated() throws Exception {
 		File statsFile = resourceInTestFolder("gc.log");
 		File previousStats = pathInTempFolder("previous-gc-stats.json");
-		writeEmptyJson(previousStats);
+		write(previousStats, emptyStats());
 		givenGcLog(statsFile);
 		givenPreviousStats(previousStats);
 		givenAnyValidation();
@@ -154,16 +154,31 @@ public class HeapWatchMojoTest {
 	}
 
 	@Test
-	public void doesOverwritePreviousStatsIfSet() throws Exception {
+	public void doesUpdatePreviousStatsIfSet() throws Exception {
 		File statsFile = resourceInTestFolder("gc.log");
 		File previousStats = pathInTempFolder("previous-gc-stats.json");
-		writeEmptyJson(previousStats);
+		write(previousStats, emptyStats());
 		givenGcLog(statsFile);
 		givenPreviousStats(previousStats);
 		givenUpdatePreviousFile(true);
 		givenAnyValidation();
 		whenExecuted();
 		assertEquals(previousStats, stats(statsFile));
+	}
+
+	@Test
+	public void doesNotUpdatePreviousStatsIfSetButValidationWasNotSuccessfull() throws Exception {
+		File statsFile = resourceInTestFolder("gc.log");
+		File previousStats = pathInTempFolder("previous-gc-stats.json");
+		write(previousStats, emptyStats());
+		givenGcLog(statsFile);
+		givenPreviousStats(previousStats);
+		givenUpdatePreviousFile(true);
+		givenHeapSpaceValidation(lowerThan("0B"));
+		assertThatThrownBy(() -> whenExecuted()).satisfies(e -> {
+			assertThat(e).isInstanceOf(MojoFailureException.class);
+			assertEquals(previousStats, emptyStats());
+		});
 	}
 
 	@Test
@@ -177,16 +192,16 @@ public class HeapWatchMojoTest {
 		assertEquals(pathInTempFolder("previous-gc-stats.json"), stats(statsFile));
 	}
 
-	private void assertEquals(File previousStats, Stats stats) throws IOException {
-		assertThat(read(previousStats)).usingRecursiveComparison().isEqualTo(stats);
+	private static void assertEquals(File previousStats, Stats stats) {
+		try {
+			assertThat(read(previousStats)).usingRecursiveComparison().isEqualTo(stats);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
-	private Stats read(File file) throws IOException {
+	private static Stats read(File file) throws IOException {
 		return JsonIO.read(file);
-	}
-
-	private void writeEmptyJson(File file) throws IOException {
-		write(file, emptyStats());
 	}
 
 	private Stats emptyStats() {
