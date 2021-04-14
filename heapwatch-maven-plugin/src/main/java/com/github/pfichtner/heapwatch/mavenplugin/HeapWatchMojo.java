@@ -113,15 +113,7 @@ public class HeapWatchMojo extends AbstractMojo {
 			throw new MojoFailureException("no validation configured");
 		}
 
-		Stats stats = stats(gclog);
-		try {
-			validate(validator, stats);
-			writeStatsTo(stats, w -> w.onSuccess);
-		} catch (MojoFailureException e) {
-			writeStatsTo(stats, w -> w.onFailure);
-			throw e;
-		}
-
+		validate(validator);
 	}
 
 	private void add(Validator validator, Map<String, String> map, String name)
@@ -191,12 +183,16 @@ public class HeapWatchMojo extends AbstractMojo {
 		return map == null ? Collections.emptyMap() : map;
 	}
 
-	private void validate(Validator validator, Stats stats) throws MojoFailureException {
+	private void validate(Validator validator) throws MojoFailureException, MojoExecutionException {
+		Stats stats = stats(gclog);
 		Log log = getLog();
 		List<ValidationResult> validationResults = validator.validate(stats);
 		messagesOf(oks(validationResults)).forEach(log::info);
 		List<ValidationResult> errors = errors(validationResults);
-		if (!errors.isEmpty()) {
+		boolean ok = errors.isEmpty();
+		// TODO move statfile logic into library (decorator pattern)?
+		writeStatsTo(stats, ok ? w -> w.onSuccess : w -> w.onFailure);
+		if (!ok) {
 			messagesOf(errors).forEach(log::error);
 			if (breakBuildOnValidationError) {
 				throw new MojoFailureException(messagesOf(errors).collect(joining(", ")));
