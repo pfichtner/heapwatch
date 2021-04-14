@@ -5,6 +5,7 @@ import static com.github.pfichtner.heapwatch.library.ValidationResults.errors;
 import static com.github.pfichtner.heapwatch.library.ValidationResults.oks;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.POST_INTEGRATION_TEST;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -31,6 +33,39 @@ import com.github.pfichtner.heapwatch.library.acl.Stats;
 
 @Mojo(name = HeapWatchMojo.GOAL, defaultPhase = POST_INTEGRATION_TEST)
 public class HeapWatchMojo extends AbstractMojo {
+
+	public static class StatsIn {
+
+		public File file;
+		public boolean failIfMissing;
+
+		public StatsIn() {
+			super();
+		}
+
+		public StatsIn(File file, boolean failIfMissing) {
+			this.file = file;
+			this.failIfMissing = failIfMissing;
+		}
+
+	}
+
+	public static class StatsOut {
+		public File file;
+		public boolean onSuccess = true;
+		public boolean onFailure = true;
+
+		public StatsOut() {
+			super();
+		}
+
+		public StatsOut(File file, boolean onSuccess, boolean onFailure) {
+			this.file = file;
+			this.onSuccess = onSuccess;
+			this.onFailure = onFailure;
+		}
+
+	}
 
 	public static final String GOAL = "verify";
 
@@ -53,11 +88,10 @@ public class HeapWatchMojo extends AbstractMojo {
 	@Parameter(name = "breakBuildOnValidationError")
 	public boolean breakBuildOnValidationError = true;
 
-	@Parameter(name = "previousStats")
-	public File previousStats;
-
-	@Parameter(name = "updatePreviousFile")
-	public boolean updatePreviousFile;
+	@Parameter(name = "readStatsFrom")
+	public StatsIn readStatsFrom;
+	@Parameter(name = "writeStatsTo")
+	public List<StatsOut> writeStatsTo;
 
 	public void execute() throws MojoFailureException, MojoExecutionException {
 		if (this.gclog == null) {
@@ -80,23 +114,14 @@ public class HeapWatchMojo extends AbstractMojo {
 		}
 
 		Stats stats = stats(gclog);
-		validate(validator, stats);
-
-		if (this.updatePreviousFile || shouldCreate()) {
-			updatePreviousFile(stats);
-		}
-	}
-
-	private boolean shouldCreate() {
-		return previousStats != null && !previousStats.exists();
-	}
-
-	private void updatePreviousFile(Stats stats) throws MojoExecutionException {
 		try {
-			JsonIO.write(previousStats, stats);
-		} catch (IOException e) {
-			throw new MojoExecutionException("Error writing previous stats " + previousStats, e);
+			validate(validator, stats);
+			writeStatsTo(stats, w -> w.onSuccess);
+		} catch (MojoFailureException e) {
+			writeStatsTo(stats, w -> w.onFailure);
+			throw e;
 		}
+
 	}
 
 	private void add(Validator validator, Map<String, String> map, String name)
@@ -112,17 +137,41 @@ public class HeapWatchMojo extends AbstractMojo {
 		}
 	}
 
-	public Stats getPrevious() throws MojoFailureException, MojoExecutionException {
-		if (previousStats == null) {
+	private Stats getPrevious() throws MojoFailureException, MojoExecutionException {
+		if (readStatsFrom == null || readStatsFrom.file == null) {
 			throw new MojoFailureException("previous stats not configured");
-		}
-		if (!previousStats.exists()) {
+		} else if (readStatsFrom.file.exists()) {
+			return readStatsFrom(readStatsFrom.file);
+		} else if (readStatsFrom.failIfMissing) {
+			throw new MojoFailureException("previous stats " + readStatsFrom.file + " not found");
+		} else {
 			return new Stats();
 		}
+	}
+
+	private static Stats readStatsFrom(File file) throws MojoExecutionException {
 		try {
-			return JsonIO.read(previousStats);
+			return JsonIO.read(file);
 		} catch (IOException e) {
-			throw new MojoExecutionException("Error reading previous stats " + previousStats, e);
+			throw new MojoExecutionException("Error reading stats from " + file, e);
+		}
+	}
+
+	private void writeStatsTo(Stats stats, Predicate<StatsOut> predicate) throws MojoExecutionException {
+		writeStatsTo(nullSafe(writeStatsTo).stream().filter(predicate).map(w -> w.file).collect(toList()), stats);
+	}
+
+	private void writeStatsTo(List<File> files, Stats stats) throws MojoExecutionException {
+		for (File file : files) {
+			writeStatsTo(file, stats);
+		}
+	}
+
+	private static void writeStatsTo(File file, Stats stats) throws MojoExecutionException {
+		try {
+			JsonIO.write(file, stats);
+		} catch (IOException e) {
+			throw new MojoExecutionException("Error writing stats to " + file, e);
 		}
 	}
 
@@ -132,6 +181,10 @@ public class HeapWatchMojo extends AbstractMojo {
 		} catch (ParseException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static <T> List<T> nullSafe(List<T> list) {
+		return list == null ? Collections.emptyList() : list;
 	}
 
 	private static <K, V> Map<K, V> nullSafe(Map<K, V> map) {

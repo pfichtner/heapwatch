@@ -48,6 +48,14 @@ You can also verify if the actual run does not consume more that x percent more 
 	<heapSpace><le>+10%</le></heapSpace>
 	<previousStats>previous-stats.json</previousStats>
 	<updatePreviousFile>true</updatePreviousFile>
+	<readStatsFrom>
+		<file>/some/path/to/prev-in.json</file>
+	</readStatsFrom>
+	<writeStatsTo>
+		<out>
+			<file>/some/path/to/prev-in.json</file>
+		</out>
+	</writeStatsTo>
 </configuration>
 ```
 

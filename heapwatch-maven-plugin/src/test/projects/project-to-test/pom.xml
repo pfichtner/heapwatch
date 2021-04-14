@@ -11,9 +11,26 @@
 					<gclog>/some/path/to/gc.log</gclog>
 					<heapSpace>
 						<lt>42M</lt>
+<!--
+						<lt>1%</lt>
+						<lt>42M</lt>
+						<lt>42M</lt>
+-->
 					</heapSpace>
-					<previousStats>/some/path/to/prev.json</previousStats>
-					<updatePreviousFile>true</updatePreviousFile>
+					<readStatsFrom>
+						<file>/some/path/to/prev-in.json</file>
+						<failIfMissing>true</failIfMissing>
+					</readStatsFrom>
+					<writeStatsTo>
+						<elementCanBeNamedFreely>
+							<file>/some/path/to/prev-out1.json</file>
+						</elementCanBeNamedFreely>
+						<foo>
+							<file>/some/path/to/prev-out2.json</file>
+							<onSuccess>false</onSuccess>
+							<onFailure>false</onFailure>
+						</foo>
+					</writeStatsTo>
 				</configuration>
 			</plugin>
 		</plugins>
