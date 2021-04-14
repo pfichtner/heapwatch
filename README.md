@@ -1,3 +1,5 @@
+[![jitpack.io](https://jitpack.io/v/pfichtner/heapwatch.svg)](https://jitpack.io/#pfichtner/heapwatch)
+[![jitci](https://jitci.com/gh/pfichtner/heapwatch/svg)](https://jitci.com/gh/pfichtner/heapwatch)
 [![Java CI with Maven](https://github.com/pfichtner/heapwatch/actions/workflows/maven.yml/badge.svg)](https://github.com/pfichtner/heapwatch/actions/workflows/maven.yml)
 [![Maven Package](https://github.com/pfichtner/heapwatch/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/pfichtner/heapwatch/actions/workflows/maven-publish.yml)
 [![BCH compliance](https://bettercodehub.com/edge/badge/pfichtner/heapwatch?branch=master)](https://bettercodehub.com/)
