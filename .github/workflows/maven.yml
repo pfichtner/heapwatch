@@ -54,7 +54,7 @@ jobs:
           java-version: 8
         # run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
       - run: ./mvnw -B --no-transfer-progress -DskipTests deploy
-      - run: mkdir staging && cp target/*.jar */target/*.jar staging
+      - run: mkdir staging && cp */target/*.jar staging
       - uses: actions/upload-artifact@v2
         with:
           name: Package
