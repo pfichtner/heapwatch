@@ -49,15 +49,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
-      - name: Set up settings.xml for GitHub Packages
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: 8
-
-      - name: Publish SNAPSHOT version to GitHub Packages (we can skip tests since we only deploy if the build workflow succeeded)
         # run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
-        run: ./mvnw -B --no-transfer-progress -DskipTests deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: ./mvnw -B --no-transfer-progress -DskipTests deploy
+      - run: mkdir staging && cp target/*.jar */target/*.jar staging
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: staging
 
