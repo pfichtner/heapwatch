@@ -49,17 +49,20 @@ jobs:
     #    coverageCommand: ./mvnw -B package integration-test -P run-its --file pom.xml
     #    coverageLocations: ${{github.workspace}}/target/site/jacoco/jacoco.xml:jacoco
 
-#  publish-snapshot:
-#    needs: build
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions/setup-java@v1
-#        with:
-#          java-version: 8
-#        # run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
-#      - run: ./mvnw -B --no-transfer-progress -DskipTests deploy
+  publish-snapshot:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 8
+        # run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
+      - run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 #      - run: mkdir staging && cp */target/*.jar staging
 #      - uses: actions/upload-artifact@v2
 #        with:
