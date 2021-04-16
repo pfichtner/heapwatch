@@ -41,10 +41,28 @@ In order to abort the build (or to issue a warning in the build log) when a cert
 
 If the heapspace exceeds 800 MB, the build aborts.
 
+You can also verify if the actual run does not consume more that x percent more (or less) memory than the run before. To make this work you have to specify a ```previousStats```. If ```updatePreviousFile``` is true the ```previousStats``` file is updated after a successfull validation. 
+```
+<configuration>
+	<gclog>${project.build.directory}/gc.log</gclog>
+	<heapSpace><le>+10%</le></heapSpace>
+	<previousStats>previous-stats.json</previousStats>
+	<updatePreviousFile>true</updatePreviousFile>
+	<readStatsFrom>
+		<file>/some/path/to/prev-in.json</file>
+	</readStatsFrom>
+	<writeStatsTo>
+		<out>
+			<file>/some/path/to/prev-in.json</file>
+		</out>
+	</writeStatsTo>
+</configuration>
+```
+
 Backlog: 
 - Release the maven plugin to maven-central
-- Create gradle plugin with same functionality
-- Support relative values ("not more than 10% more than memory used last time")
+- ~Create gradle plugin with same functionality~ working via https://github.com/pfichtner/maedle (WIP)
+- ~Support relative values ("not more than 10% more than memory used last time")~ implemented
 - Support more meassurements (currently supported: heapOccupancy, heapAfterGC, heapSpace, metaspaceOccupancy, metaspaceAfterGC, metaspaceSpace) 
 - Investigate if we can attach the plugin analog to jacoco-maven-plugin (via prepare-agent goal)
 

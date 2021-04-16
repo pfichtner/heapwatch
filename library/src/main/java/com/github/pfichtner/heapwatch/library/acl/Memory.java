@@ -20,6 +20,10 @@ public class Memory implements Comparable<Memory> {
 		return new Memory(delegate);
 	}
 
+	public Memory multiply(double d) {
+		return adapt(org.eclipselabs.garbagecat.util.Memory.bytes((long) (delegate.getValue(BYTES) * d)));
+	}
+
 	@Override
 	public int hashCode() {
 		// delegate has no hashCode defined yet, so we do have to use a workaround

@@ -4,6 +4,8 @@ import static com.github.pfichtner.heapwatch.library.Comparison.LE;
 import static com.github.pfichtner.heapwatch.library.Comparison.LT;
 import static com.github.pfichtner.heapwatch.library.ValidationResults.errors;
 import static com.github.pfichtner.heapwatch.library.ValidationResults.oks;
+import static com.github.pfichtner.heapwatch.library.ValidatorTest.AbsoluteParameter.absolute;
+import static com.github.pfichtner.heapwatch.library.ValidatorTest.RelativeParameter.relative;
 import static com.github.pfichtner.heapwatch.library.acl.Memory.memory;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_AFTER_GC;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_OCCUPANCY;
@@ -11,7 +13,6 @@ import static com.github.pfichtner.heapwatch.library.acl.Stats.HEAP_SPACE;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.METASPACE_AFTER_GC;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.METASPACE_OCCUPANCY;
 import static com.github.pfichtner.heapwatch.library.acl.Stats.METASPACE_SPACE;
-import static com.github.pfichtner.heapwatch.library.acl.Stats.functionForAttribute;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
@@ -19,11 +20,8 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.anything;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Test;
 
 import com.github.pfichtner.heapwatch.library.acl.Memory;
@@ -31,38 +29,61 @@ import com.github.pfichtner.heapwatch.library.acl.Stats;
 
 public class ValidatorTest {
 
-	public static class Parameter {
+	protected static class AbsoluteParameter {
 
 		private final String name;
-		private final Object value;
 		private final Comparison comparison;
+		private final Memory memory;
 
-		public Parameter(String name, Comparison comparison, Object value) {
+		protected static AbsoluteParameter absolute(String name, Comparison comparison, String value) {
+			return new AbsoluteParameter(name, comparison, value);
+		}
+
+		private AbsoluteParameter(String name, Comparison comparison, String value) {
+			this(name, comparison, memory(value));
+		}
+
+		private AbsoluteParameter(String name, Comparison comparison, Memory memory) {
 			this.name = name;
-			this.value = value;
 			this.comparison = comparison;
+			this.memory = memory;
 		}
 
-		public Matcher<Memory> matcher() {
-			return comparison.matcher(memory(String.valueOf(value)));
+	}
+
+	protected static class RelativeParameter {
+
+		private final String name;
+		private final Comparison comparison;
+		private double mul;
+		private Stats prev;
+
+		protected static RelativeParameter relative(String name, Comparison comparison, double mul, Stats prev) {
+			return new RelativeParameter(name, comparison, mul, prev);
 		}
+
+		private RelativeParameter(String name, Comparison comparison, double mul, Stats prev) {
+			this.name = name;
+			this.comparison = comparison;
+			this.mul = mul;
+			this.prev = prev;
+		}
+
 	}
 
 	static final boolean OK = true;
 	static final boolean NOT_OK = false;
 
-	List<Parameter> parameters = new ArrayList<>();
-
 	Memory maximumHeap;
 	Stats stats = new Stats();
 	Validator validator = new Validator();
 
-	List<ValidationResult> validations;
+	List<ValidationResult> validationResults;
 
 	@Test
 	void raisedIfMoreHeapSpaceIsUsedThanAllowed() {
 		String name = "heapSpace";
-		givenValidation(new Parameter(name, LE, "32K"));
+		givenValidation(absolute(name, LE, "32K"));
 		givenAnalyseHasHeapSpaceUsed("33K");
 		whenCheckIsDone();
 		thenTheResultIs(NOT_OK);
@@ -71,7 +92,7 @@ public class ValidatorTest {
 
 	@Test
 	void doNotRaiseIfNotMoreHeapSpaceIsUsedThanAllowed() {
-		givenValidation(new Parameter("heapSpace", LE, "32K"));
+		givenValidation(absolute("heapSpace", LE, "32K"));
 		givenAnalyseHasHeapSpaceUsed("32K");
 		whenCheckIsDone();
 		thenTheResultIs(OK);
@@ -81,8 +102,7 @@ public class ValidatorTest {
 
 	@Test
 	void multipleViolations() {
-		String[] messages = new String[] { "A", "B", "C" };
-		givenAlwaysFalseValidationWithMessage(messages);
+		givenAlwaysFalseValidationWithMessage("A", "B", "C");
 		whenCheckIsDone();
 		thenTheResultIs(NOT_OK);
 		withErrorMessages(e("A"), e("B"), e("C"));
@@ -92,13 +112,12 @@ public class ValidatorTest {
 	void allAttributes() {
 		String anyMemSize = "32K";
 		givenValidations( //
-				new Parameter(HEAP_AFTER_GC, LT, anyMemSize), //
-				new Parameter(HEAP_OCCUPANCY, LT, anyMemSize), //
-				new Parameter(HEAP_SPACE, LT, anyMemSize), //
-				new Parameter(METASPACE_AFTER_GC, LT, anyMemSize), //
-				new Parameter(METASPACE_OCCUPANCY, LT, anyMemSize), //
-				new Parameter(METASPACE_SPACE, LT, anyMemSize) //
-		);
+				absolute(HEAP_AFTER_GC, LT, anyMemSize), //
+				absolute(HEAP_OCCUPANCY, LT, anyMemSize), //
+				absolute(HEAP_SPACE, LT, anyMemSize), //
+				absolute(METASPACE_AFTER_GC, LT, anyMemSize), //
+				absolute(METASPACE_OCCUPANCY, LT, anyMemSize), //
+				absolute(METASPACE_SPACE, LT, anyMemSize));
 
 		stats.maxHeapAfterGC = memory(anyMemSize);
 		stats.maxHeapOccupancy = memory(anyMemSize);
@@ -108,23 +127,52 @@ public class ValidatorTest {
 		stats.maxMetaspaceSpace = memory(anyMemSize);
 		whenCheckIsDone();
 		thenTheResultIs(NOT_OK);
-		assertThat(validations.size(), is(validator.getValidations()));
+		assertThat(validationResults.size(), is(validator.getValidations()));
+	}
+
+	@Test
+	void raisedIfMoreHeapSpaceIsUsedThanAllowedWithRelativeValue() {
+		Stats prev = new Stats();
+		prev.maxHeapSpace = memory("100B");
+		givenValidation(relative("heapSpace", LT, 1.10, prev));
+		givenAnalyseHasHeapSpaceUsed("110B");
+		whenCheckIsDone();
+		thenTheResultIs(NOT_OK);
+		withErrorMessage("Expected \"heapSpace\", a value less than <110B> but <110B> was equal to <110B>");
+	}
+
+	@Test
+	void doNotRaiseIfNotMoreHeapSpaceIsUsedThanAllowedWithRelativeValue() {
+		Stats prev = new Stats();
+		prev.maxHeapSpace = memory("100B");
+		givenValidation(relative("heapSpace", LT, 1.10, prev));
+		givenAnalyseHasHeapSpaceUsed("109B");
+		whenCheckIsDone();
+		withNoErrorMessages();
+		withOkMessage("\"heapSpace\", a value less than <110B> matched for value <109B>");
 	}
 
 	private String e(String attribute) {
 		return "Expected \"" + attribute + "\", not ANYTHING but was null";
 	}
 
-	private void givenValidation(Parameter parameter) {
+	private void givenValidation(AbsoluteParameter parameter) {
 		givenValidations(parameter);
 	}
 
-	private void givenValidations(Parameter... parameters) {
-		for (Parameter parameter : parameters) {
-			Function<Stats, Memory> function = functionForAttribute(parameter.name);
-			if (function != null) {
-				validator.addValidation(function, parameter.matcher(), parameter.name);
-			}
+	private void givenValidations(AbsoluteParameter... parameters) {
+		for (AbsoluteParameter parameter : parameters) {
+			validator.addValidation(parameter.name, parameter.comparison.name(), parameter.memory);
+		}
+	}
+
+	private void givenValidation(RelativeParameter relativeParameter) {
+		givenValidations(relativeParameter);
+	}
+
+	private void givenValidations(RelativeParameter... relativeParameters) {
+		for (RelativeParameter parameter : relativeParameters) {
+			validator.addValidation(parameter.name, parameter.comparison.name(), parameter.mul, parameter.prev);
 		}
 	}
 
@@ -132,14 +180,14 @@ public class ValidatorTest {
 		stats.maxHeapSpace = memory(memory);
 	}
 
-	public void givenAlwaysFalseValidationWithMessage(String[] messages) {
+	public void givenAlwaysFalseValidationWithMessage(String... messages) {
 		for (String message : messages) {
 			validator.addValidation(a -> null, not(anything()), message);
 		}
 	}
 
 	private void whenCheckIsDone() {
-		validations = validator.validate(stats);
+		validationResults = validator.validate(stats);
 	}
 
 	private void thenTheResultIs(boolean expected) {
@@ -147,7 +195,7 @@ public class ValidatorTest {
 	}
 
 	private boolean isOk() {
-		return errors(validations).isEmpty();
+		return errors(validationResults).isEmpty();
 	}
 
 	private void withNoErrorMessages() {
@@ -163,11 +211,11 @@ public class ValidatorTest {
 	}
 
 	private List<String> errorMessages() {
-		return messages(errors(validations));
+		return messages(errors(validationResults));
 	}
 
 	private void withOkMessage(String... expectedMessages) {
-		assertThat(messages(oks(validations)), is(asList(expectedMessages)));
+		assertThat(messages(oks(validationResults)), is(asList(expectedMessages)));
 	}
 
 	private List<String> messages(List<ValidationResult> results) {
