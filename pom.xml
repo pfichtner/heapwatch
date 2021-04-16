@@ -18,6 +18,16 @@
 		<module>heapwatch-maven-plugin-shade</module>
 	</modules>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>github</id>
+			<url>https://maven.pkg.github.com/pfichtner/maedle</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -59,6 +69,29 @@
 				<configuration>
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.pfichtner.maedle</groupId>
+				<artifactId>maedle-maven-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<configuration>
+                                        <transformOnlyIfConfigured>true</transformOnlyIfConfigured>
+					<mappings>
+						<mapping>
+							<id>com/github/pfichtner/heapwatch/mavenplugin/HeapWatchMojo</id>
+							<pluginId>com.github.pfichtner.heapwatch.extension</pluginId>
+							<extension>heapwatch</extension>
+						</mapping>
+					</mappings>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
