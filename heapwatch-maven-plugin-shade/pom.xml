@@ -27,7 +27,8 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.4</version>
 				<configuration>
-					<minimizeJar>true</minimizeJar>
+                                        <finalName>heapwatch-maven-plugin-${project.version}</finalName>
+				 	<minimizeJar>true</minimizeJar>
 					<filters>
 						<filter>
 							<artifact>com.github.pfichtner.heapwatch:heapwatch-maven-plugin</artifact>
