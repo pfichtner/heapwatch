@@ -12,10 +12,14 @@
 
 	<artifactId>heapwatch-maven-plugin-shade</artifactId>
 
+	<properties>
+		<heapwatch-maven-plugin>heapwatch-maven-plugin</heapwatch-maven-plugin>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.github.pfichtner.heapwatch</groupId>
-			<artifactId>heapwatch-maven-plugin</artifactId>
+			<artifactId>${heapwatch-maven-plugin}</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
@@ -27,7 +31,7 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>3.2.4</version>
 				<configuration>
-                                        <finalName>heapwatch-maven-plugin-${project.version}</finalName>
+                                        <finalName>${heapwatch-maven-plugin}-${project.version}</finalName>
 				 	<minimizeJar>true</minimizeJar>
 					<filters>
 						<filter>
