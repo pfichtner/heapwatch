@@ -63,11 +63,18 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>sonatype</id>
+			<repository>
+				<id>oss.sonatype.org</id>
+				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			</repository>
+		</profile>
+	</profiles>
+
+
 	<distributionManagement>
-		<repository>
-			<id>oss.sonatype.org</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
 		<snapshotRepository>
 			<id>github</id>
 			<name>GitHub Packages</name>
