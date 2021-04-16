@@ -31,7 +31,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-      
     - name: Deploy
-      run: ./mvnw -B deploy integration-test -P run-its --file pom.xml
+      run: ./mvnw -B package integration-test deploy -P run-its --file pom.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 # TO delete old versions
