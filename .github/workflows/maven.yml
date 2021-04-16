@@ -58,8 +58,8 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 8
-        # run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
-      - run: ./mvnw -B --no-transfer-progress -DskipTests package deploy --projects :heapwatch-maven-plugin-shade
+      # - run: ./mvnw -B --no-transfer-progress -DskipTests package deploy --projects :heapwatch-maven-plugin-shade
+      - run: ./mvnw -B --no-transfer-progress -DskipTests package deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
