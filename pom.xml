@@ -63,23 +63,24 @@
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>sonatype</id>
-			<repository>
-				<id>oss.sonatype.org</id>
-				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-			</repository>
-		</profile>
-	</profiles>
-
-
 	<distributionManagement>
-		<snapshotRepository>
+		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
 			<url>https://maven.pkg.github.com/pfichtner/heapwatch</url>
-		</snapshotRepository>
+		</repository>
 	</distributionManagement>
+
+	<profiles>
+		<profile>
+			<id>sonatype</id>
+			<distributionManagement>
+				<repository>
+					<id>oss.sonatype.org</id>
+					<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
 
 </project>
