@@ -32,10 +32,6 @@ jobs:
           ${{ runner.os }}-maven-      
     - name: Build
       run: ./mvnw -B integration-test -P run-its --file pom.xml
-    - name: Deploy
-      run: ./mvnw -B deploy --file pom.xml
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 # TO delete old versions
 # https://github.com/actions/delete-package-versions
     - name: Upload to Codecov
