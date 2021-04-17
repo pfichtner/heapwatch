@@ -159,10 +159,27 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.4</version>
 				<configuration>
-					<skip>true</skip>
+					<minimizeJar>true</minimizeJar>
+					<filters>
+						<filter>
+							<artifact>com.github.pfichtner.heapwatch:heapwatch-maven-plugin</artifact>
+							<includes>
+								<include>**</include>
+							</includes>
+						</filter>
+					</filters>
 				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
