@@ -11,6 +11,7 @@
 	</parent>
 
 	<artifactId>heapwatch-maven-plugin-shade</artifactId>
+        <packaging>jar</packaging>
 
 	<properties>
 		<heapwatch-maven-plugin>heapwatch-maven-plugin</heapwatch-maven-plugin>
@@ -51,6 +52,13 @@
 					</execution>
 				</executions>
 			</plugin>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-deploy-plugin</artifactId>
+                                <configuration>
+                                        <skip>false</skip>
+                                </configuration>
+                        </plugin>
 		</plugins>
 	</build>
 
