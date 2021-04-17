@@ -202,12 +202,13 @@ public class HeapWatchMojoTest {
 	@Test
 	public void doesCreatePreviousStatsIfSet() throws Exception {
 		File statsFile = resourceInTestFolder("gc.log");
+		File previousStats = pathInTempFolder("subdir/a/b/c/previous-gc-stats.json");
 		givenGcLog(statsFile);
-		givenPreviousStats(pathInTempFolder("previous-gc-stats.json"), false);
+		givenPreviousStats(previousStats, false);
 		givenWriteStatsToStatsRead(false);
 		givenAnyValidation();
 		whenExecuted();
-		assertEquals(pathInTempFolder("previous-gc-stats.json"), stats(statsFile));
+		assertEquals(previousStats, stats(statsFile));
 	}
 
 	private static void assertEquals(File previousStats, Stats stats) {

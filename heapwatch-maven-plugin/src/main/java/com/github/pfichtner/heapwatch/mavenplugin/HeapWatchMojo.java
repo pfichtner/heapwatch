@@ -160,6 +160,10 @@ public class HeapWatchMojo extends AbstractMojo {
 	}
 
 	private static void writeStatsTo(File file, Stats stats) throws MojoExecutionException {
+		File directory = file.getParentFile();
+		if (!directory.exists() && !directory.mkdirs()) {
+			throw new MojoExecutionException("Cannot create directory " + directory);
+		}
 		try {
 			JsonIO.write(file, stats);
 		} catch (IOException e) {
