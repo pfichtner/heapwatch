@@ -41,19 +41,25 @@ In order to abort the build (or to issue a warning in the build log) when a cert
 
 If the heapspace exceeds 800 MB, the build aborts.
 
-You can also verify if the actual run does not consume more that x percent more (or less) memory than the run before. To make this work you have to specify a ```previousStats```. If ```updatePreviousFile``` is true the ```previousStats``` file is updated after a successfull validation. 
+You can also verify if the actual run does not consume more that x percent more (or less) memory than the run before. 
+To make this work you have to specify where those previous stats can be read. If you want those stats to be updated you can specify ```writeStatsTo```. 
 ```
 <configuration>
 	<gclog>${project.build.directory}/gc.log</gclog>
 	<heapSpace><le>+10%</le></heapSpace>
-	<previousStats>previous-stats.json</previousStats>
-	<updatePreviousFile>true</updatePreviousFile>
 	<readStatsFrom>
-		<file>/some/path/to/prev-in.json</file>
+		<file>/a/b/c/prev.json</file>
 	</readStatsFrom>
 	<writeStatsTo>
 		<out>
-			<file>/some/path/to/prev-in.json</file>
+			<file>/a/b/c/prev.json</file> <!-- overwrite content in the file the stats have been read from -->
+			<onSuccess>true</onSuccess>
+			<onFailure>false</onFailure>
+		</out>
+		<out>
+			<file>/a/b/c/prev-on-validation-failure.json</file>
+			<onSuccess>false</onSuccess>
+			<onFailure>true</onFailure>
 		</out>
 	</writeStatsTo>
 </configuration>
