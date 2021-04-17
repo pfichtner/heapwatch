@@ -55,7 +55,7 @@ jobs:
         with:
           java-version: 8
       # - run: ./mvnw -B --no-transfer-progress -DskipTests deploy --projects :heapwatch-maven-plugin-shade
-      - run: ./mvnw -X -B --no-transfer-progress -DskipTests deploy
+      - run: ./mvnw -B --no-transfer-progress -DskipTests deploy
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
