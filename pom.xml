@@ -9,7 +9,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.jacoco.version>0.8.6</org.jacoco.version>
+		<org.jacoco.version>0.8.12</org.jacoco.version>
 	</properties>
 
 	<modules>
