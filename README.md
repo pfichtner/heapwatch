@@ -7,7 +7,7 @@
 # heapwatch
 Have you ever had the problem that your application functionally fulfilled all the requirements, but hours or days after deployment you noticed that your application suddenly allocated twice as much memory as before? A big problem is of course finding the cause in all the commits between the last and the current release. Wouldn't it be nice to be informed at the moment of the commit that your application is suddenly consuming significantly more memory than before?
 
-This is exactly what this pluign solves! How does this work?  All you have to do is tell your JVM to write the information about the garbage collector to a log file. So if you want to view the memory used during the test execution, you can do this by making the following change in your pom:
+This is exactly what this plugin solves! How does this work?  All you have to do is tell your JVM to write the information about the garbage collector to a log file. So if you want to view the memory used during the test execution, you can do this by making the following change in your pom:
 ```
 <plugin>
 	<artifactId>maven-surefire-plugin</artifactId>
