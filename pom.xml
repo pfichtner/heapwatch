@@ -2,8 +2,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.pfichtner.heapwatch</groupId>
-	<artifactId>parent</artifactId>
+	<groupId>io.github.pfichtner.heapwatch</groupId>
+	<artifactId>heapwatch-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -24,6 +24,7 @@
 		<module>heapwatch-maven-plugin</module>
 	</modules>
 
+<!--
 	<pluginRepositories>
 		<pluginRepository>
 			<id>github</id>
@@ -33,6 +34,7 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+-->
 
 	<build>
 		<plugins>
@@ -76,8 +78,9 @@
 					<skip>false</skip>
 				</configuration>
 			</plugin>
+<!--
 			<plugin>
-				<groupId>com.github.pfichtner.maedle</groupId>
+				<groupId>io.github.pfichtner.maedle</groupId>
 				<artifactId>maedle-maven-plugin</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 				<configuration>
@@ -85,7 +88,7 @@
 					<mappings>
 						<mapping>
 							<id>com/github/pfichtner/heapwatch/mavenplugin/HeapWatchMojo</id>
-							<pluginId>com.github.pfichtner.heapwatch.extension</pluginId>
+							<pluginId>io.github.pfichtner.heapwatch.extension</pluginId>
 							<extension>heapwatch</extension>
 						</mapping>
 					</mappings>
@@ -99,6 +102,7 @@
 					</execution>
 				</executions>
 			</plugin>
+-->
 		</plugins>
 	</build>
 

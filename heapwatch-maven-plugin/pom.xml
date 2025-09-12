@@ -5,8 +5,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.github.pfichtner.heapwatch</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>io.github.pfichtner.heapwatch</groupId>
+		<artifactId>heapwatch-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
@@ -50,9 +50,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.pfichtner.heapwatch</groupId>
+			<groupId>io.github.pfichtner.heapwatch</groupId>
 			<artifactId>library</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+                        <version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.eclipsesource.minimal-json</groupId>
